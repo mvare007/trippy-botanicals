@@ -7,6 +7,9 @@ WORKDIR /bud-buddies
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
+ARG FLASK_ENV
+ENV FLASK_ENV=${FLASK_ENV}
+
 COPY . .
 
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]

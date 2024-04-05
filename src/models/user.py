@@ -1,4 +1,4 @@
-from app import app, db
+from app import db
 
 class User(db.Model):
 		id = db.Column(db.Integer, primary_key=True)
@@ -8,6 +8,3 @@ class User(db.Model):
 		def __init__(self, username, email):
 			self.username = username
 			self.email = email
-
-with app.app_context():
-    db.create_all()
