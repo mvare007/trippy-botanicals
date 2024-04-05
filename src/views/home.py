@@ -3,5 +3,5 @@ from app import app
 
 
 @app.route('/')
-def index():
-	return 'Home'
+def home():
+	return render_template('home.html')

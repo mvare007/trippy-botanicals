@@ -5,6 +5,7 @@ class Config:
     TESTING = False
     DEBUG = True
     DATABASE_NAME = 'bud_buddies'
+    BOOTSTRAP_BOOTSWATCH_THEME = 'Solar'
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql://user@localhost/foo'

@@ -1,9 +1,11 @@
+from flask_bootstrap import Bootstrap4
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='src/templates', static_folder='src/static')
 environment = environ['FLASK_ENV']
+bootstrap = Bootstrap4(app) # https://bootstrap-flask.readthedocs.io
 
 # Configuration
 if environment == 'production':
