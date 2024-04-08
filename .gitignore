@@ -1,6 +1,8 @@
 venv
+.venv
 __pycache__/
+tmp
+.flaskenv
 .vscode
 *.log
 *.sqlite
-tmp
