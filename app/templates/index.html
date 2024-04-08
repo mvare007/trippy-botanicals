@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	Home
+{% endblock %}
+
+{% block content %}
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Welcome to my website</h1>
+				<p>This is the home page</p>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<!-- Additional scripts -->
+	<script>
+		console.log('Home page script');
+	</script>
+
+{% endblock %}
