@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% set active_page = "user" %}
+
+{% block content %}
+    <h1>User: {{ user.fullname }}</h1>
+    <hr>
+
+				<table class="table">
+						<thead>
+								<tr>
+										<th scope="col">id</th>
+										<th scope="col">Date</th>
+										<th scope="col">Total</th>
+								</tr>
+						</thead>
+						<tbody>
+								{% order in user.orders %}
+										<tr>
+												<th scope="row">{ order.id }</th>
+												<td>{ order.created_at }</td>
+												<td>{ order.total }€</td>
+										</tr>
+								{% endfor %}
+						</tbody>
+				</table>
+
+{% endblock %}

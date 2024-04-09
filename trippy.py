@@ -1,7 +1,7 @@
 from app import app
 
 # TODO:
-# * Authorization (login)
+# * Authorization (login) X
 # * Sql alchemy seed  - user admin and some products
 # * Backoffice page (only available for admin users) with CRUDS for users, product categories, products, and orders
 # * handle uploads

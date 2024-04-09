@@ -5,10 +5,12 @@ import sqlalchemy as sql
 from app import db
 from app.models import User
 
-def uniqueness_check(self, field, model):
-	if db.session.scalar(sql.select(model).where(
-			model == field.data)) is not None:
-			raise ValidationError(f'Please use a different {field}.')
+class Validations:
+    @staticmethod
+    def uniqueness_check(self, field, model):
+        if db.session.scalar(sql.select(model).where(
+                model == field.data)) is not None:
+                raise ValidationError(f'Please use a different {field}.')
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
@@ -30,14 +32,10 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
-    # def validate_username(self, username):
-    #     user = db.session.scalar(sql.select(User).where(
-    #         User.username == username.data))
-    #     if user is not None:
-    #         raise ValidationError('Please use a different username.')
-
     def validate_email(self, email):
-        uniqueness_check(self, email, User)
+        Validations.uniqueness_check(self, email, User)
 
     def validate_vat_number(self, vat_number):
-        uniqueness_check(self, vat_number, User)
+        Validations.uniqueness_check(self, vat_number, User)
+
+
