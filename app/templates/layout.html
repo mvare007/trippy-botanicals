@@ -1,84 +1,136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% block head %}
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-        {% block styles %}
-            <!-- Bootstrap CSS -->
-            {{ bootstrap.load_css() }}
-        {% endblock %}
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }} {% endblock %}
 
-        <title>
-						{% block title %}Trippy Botanicals{% endblock %}
-				</title>
-        {% endblock %}
-    </head>
-    <body>
-				<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-						<div class="container-fluid">
-								<a class="navbar-brand" href="{{ url_for('index') }}">
-									<img src="/static/logo.png" alt="logo" width="36" height="30" class="rounded-inline-block align-text-top">
-									Trippy Botanicals
-								</a>
-								<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-										<span class="navbar-toggler-icon"></span>
-								</button>
-								<div class="collapse navbar-collapse" id="navbarNav">
-										{% set active_page = active_page|default('index') -%}
-										<ul class="navbar-nav">
-											<li class="nav-item">
-														<a id="index" class="{% if active_page == 'index' %} nav-link active {% else %} nav-link {% endif %}" href="#">
-																Home
-														</a>
-												</li>
-												<li class="nav-item">
-														<a class="{% if active_page == 'products' %} nav-link active {% else %} nav-link {% endif %}" href="#">
-																Products
-														</a>
-												</li>
-												<li class="nav-item">
-														<a class="{% if id == active_page %} nav-link active {% else %} nav-link {% endif %}" href="#">
-																Rewards
-														</a>
-												</li>
-												{% if current_user.is_authenticated %}
-														<li class="nav-item">
-																<a class="navlink" href="{{ url_for('logout') }}">
-																		Logout
-																</a>
-														</li>
-														<li class="nav-item">
-																<a class="{% if active_page == 'user' %} nav-link active {% else %} nav-link {% endif %}" href="{{ url_for('user', id=current_user.id) }}">
-																		Profile
-																</a>
-														</li>
-														{% else %}
-														<li class="nav-item">
-																<a id="login"class="{% if active_page == 'login' %} nav-link active {% else %} nav-link {% endif %}" href="{{ url_for('login') }}">
-																		Login
-																</a>
-														</li>
-														<li class="nav-item">
-																<a class="{% if active_page == 'register' %} nav-link active {% else %} nav-link {% endif %}" href="{{ url_for('register') }}">
-																		Register
-																</a>
-														</li>
-												{% endif %}
-										</ul>
-								</div>
-						</div>
-				</nav>
-				<div class="container">
-						<!-- Page content -->
-						{% block content %}{% endblock %}
-
-						{% block scripts %}
-						<!-- Optional JavaScript -->
-								{{ bootstrap.load_js() }}
-						{% endblock %}
-				</div>
-    </body>
+    <title>{% block title %}Trippy Botanicals{% endblock %}</title>
+    {% endblock %}
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+          <img
+            src="/static/logo.png"
+            alt="logo"
+            width="36"
+            height="30"
+            class="rounded-inline-block align-text-center"
+          />
+          Trippy Botanicals
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          {% set active_page = active_page|default('index') -%}
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                id="index"
+                class="{% if active_page == 'index' %} nav-link active {% else %} nav-link {% endif %}"
+                href="#"
+              >
+                Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="{% if active_page == 'products' %} nav-link active {% else %} nav-link {% endif %}"
+                href="#"
+              >
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="{% if id == active_page %} nav-link active {% else %} nav-link {% endif %}"
+                href="#"
+              >
+                Rewards
+              </a>
+            </li>
+          </ul>
+          <div
+            class="collapse navbar-collapse justify-content-end"
+            id="navbarSupportedContent"
+          >
+            <ul class="navbar-nav">
+              {% if current_user.is_authenticated %}
+								<li class="nav-item">
+									<a
+										class="{% if active_page == 'user' %} nav-link active {% else %} nav-link {% endif %}"
+										href="{{ url_for('user', id=current_user.id) }}"
+									>
+										Profile
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="{{ url_for('logout') }}"> Logout </a>
+								</li>
+              {% else %}
+								<li class="nav-item">
+									<a
+										id="login"
+										class="{% if active_page == 'login' %} nav-link active {% else %} nav-link {% endif %}"
+										href="{{ url_for('login') }}"
+									>
+										Login
+									</a>
+								</li>
+								<li class="nav-item">
+									<a
+										class="{% if active_page == 'register' %} nav-link active {% else %} nav-link {% endif %}"
+										href="{{ url_for('register') }}"
+									>
+										Register
+									</a>
+								</li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link icon-link icon-link-hover" href="#">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-cart-dash-fill text-light"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <!-- Page content -->
+      {% block content %} {% endblock %} {% block scripts %}
+      <!-- Optional JavaScript -->
+      {{ bootstrap.load_js() }} {% endblock %}
+    </div>
+  </body>
 </html>
