@@ -22,10 +22,11 @@ def user(id):
     return render_template("user.html", user=user)
 
 
-@bp.route("/products<category_id>")
+@bp.route("/products/<category_id>")
+@bp.route("/products", defaults={"category_id": None})
 def products(category_id):
     if category_id:
-        products = db.all(sql.select(Product).where(Product.category_id.in_(category_id)))
+        products = Product.query.filter(Product.category_id == category_id).all()
     else:
         products = Product.query.all()
 
