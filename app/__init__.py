@@ -5,40 +5,58 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-# Flask - https://flask.palletsprojects.com
-app = Flask(__name__)
-
 # Bootstrap - https://bootstrap-flask.readthedocs.io
-bootstrap = Bootstrap5(app)
+bootstrap = Bootstrap5()
 
 # Configuration
 environment = environ["FLASK_ENV"]
 if environment == "production":
     from config import ProductionConfig
 
-    app.config.from_object(ProductionConfig())
+    config = ProductionConfig()
 elif environment == "development":
     from config import DevelopmentConfig
 
-    app.config.from_object(DevelopmentConfig())
+    config = DevelopmentConfig()
 elif environment == "test":
     from config import TestingConfig
 
-    app.config.from_object(TestingConfig())
+    config = TestingConfig()
 else:
     raise ValueError("Invalid environment name")
 
 # Flask SQL Alchemy - https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/
 db = SQLAlchemy()
-db.init_app(app)
 
 # Flask Migrate - https://flask-migrate.readthedocs.io/en/latest/
-migrate = Migrate(app, db)
+migrate = Migrate()
 
 # Flask Login - https://flask-login.readthedocs.io/en/latest/
 login_manager = LoginManager()
 login_manager.login_view = "login"
-login_manager.init_app(app)
+login_manager.login_message = "Please log in to access this page."
 
-with app.app_context():
-    from app import models
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(config)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+    bootstrap.init_app(app)
+
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp)
+
+    from app.admin import bp as admin_bp
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+
+    from app.cli import bp as cli_bp
+    app.register_blueprint(cli_bp)
+
+    return app
+
+from app import models

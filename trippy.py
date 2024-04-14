@@ -1,8 +1,26 @@
-from app import app
+import sqlalchemy as sql
+import sqlalchemy.orm as orm
+from app import create_app, db
+from app.models import User, ProductCategory, Product, Order, OrderItem
+
+app = create_app()
+
+@app.shell_context_processor
+def make_shell_context():
+    return {
+        "sql": sql,
+        "orm": orm,
+        "db": db,
+        "User": User,
+        "ProductCategory": ProductCategory,
+        "Product": Product,
+        "Order": Order,
+        "OrderItem": OrderItem,
+    }
 
 # TODO:
 # * Authorization (login) X
-# * Sql alchemy seed  - user admin and some products
+# * Sql alchemy seed  - user admin and some products X
 # * Backoffice page (only available for admin users) with CRUDS for users, product categories, products, and orders
 # * handle uploads
 # * Feature daily guessing game - wins points for user
@@ -11,7 +29,7 @@ from app import app
 # * Tests
 
 # TODO: User Stories
-# * As a user, I want to be able to register and login
+# * As a user, I want to be able to register and login X
 # * As a user, I want to be able to browse products
 # * As a user, I want to be able to add products to my shopping cart
 # * As a user, I want to be able to checkout

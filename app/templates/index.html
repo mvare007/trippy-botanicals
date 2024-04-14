@@ -7,14 +7,15 @@
 
 {% block content %}
 
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<h1>Welcome to my website</h1>
-				<p>This is the home page</p>
-			</div>
+<h1 class="mt-4">Shop now</h1>
+<hr>
+<div class="cards">
+	{% for category in product_categories %}
+		<div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/breakfast.jpg)">
+			<a href="{{ url_for('main.products', category_id=category.id) }}">{{ category.name }}</a>
 		</div>
-	</div>
+	{% endfor %}
+</div>
 
 {% endblock %}
 
