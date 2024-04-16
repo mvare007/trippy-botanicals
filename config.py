@@ -9,7 +9,7 @@ class Config:
     DEBUG = True
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     DATABASE_NAME = "trippy"
-    BOOTSTRAP_BOOTSWATCH_THEME = "Vapor"
+    BOOTSTRAP_BOOTSWATCH_THEME = "lux"
 
 
 class ProductionConfig(Config):
