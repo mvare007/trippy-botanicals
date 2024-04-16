@@ -7,9 +7,16 @@
 
 {% block content %}
 
-<h1 class="mt-4">Shop now</h1>
+<div class="banner my-5" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url({{ url_for('static', filename='logo.png') }});">
+  <div class="container">
+    <h1 class="text-warning"><strong>Trippy Botanicals</strong></h1>
+    <p>Leaf your worries behind with our plants.</p>
+    <a class="btn btn-light" href="#product-categories">Shop Now</a>
+  </div>
+</div>
+
 <hr>
-<div class="cards">
+<div id="product-categories" class="cards">
 	{% for category in product_categories %}
 		<div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/breakfast.jpg)">
 			<a href="{{ url_for('main.products', category_id=category.id) }}">{{ category.name }}</a>
