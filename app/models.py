@@ -1,14 +1,131 @@
-from app import db, login_manager
-from typing import Optional
+from datetime import datetime, timezone
+from typing import List, Optional
+
 import sqlalchemy as sql
 import sqlalchemy.orm as orm
+from flask import json
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timezone
-from hashlib import md5
+from sqlalchemy.orm.attributes import QueryableAttribute
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from app import db, login_manager
 
 
-class User(UserMixin, db.Model):
+class BaseModel(db.Model):
+    __abstract__ = True
+
+    def to_dict(self, show=None, _hide=None, _path=None):
+        """Return a dictionary representation of this model."""
+
+        show = show or []
+        _hide = _hide or []
+
+        hidden = self._hidden_fields if hasattr(self, "_hidden_fields") else []
+        default = self._default_fields if hasattr(self, "_default_fields") else []
+        default.extend(["id", "modified_at", "created_at"])
+
+        if not _path:
+            _path = self.__tablename__.lower()
+
+            def prepend_path(item):
+                item = item.lower()
+                if item.split(".", 1)[0] == _path:
+                    return item
+                if len(item) == 0:
+                    return item
+                if item[0] != ".":
+                    item = ".%s" % item
+                item = "%s%s" % (_path, item)
+                return item
+
+            _hide[:] = [prepend_path(x) for x in _hide]
+            show[:] = [prepend_path(x) for x in show]
+
+        columns = self.__table__.columns.keys()
+        relationships = self.__mapper__.relationships.keys()
+        properties = dir(self)
+
+        ret_data = {}
+
+        for key in columns:
+            if key.startswith("_"):
+                continue
+            check = "%s.%s" % (_path, key)
+            if check in _hide or key in hidden:
+                continue
+            if check in show or key in default:
+                ret_data[key] = getattr(self, key)
+
+        for key in relationships:
+            if key.startswith("_"):
+                continue
+            check = "%s.%s" % (_path, key)
+            if check in _hide or key in hidden:
+                continue
+            if check in show or key in default:
+                _hide.append(check)
+                is_list = self.__mapper__.relationships[key].uselist
+                if is_list:
+                    items = getattr(self, key)
+                    if self.__mapper__.relationships[key].query_class is not None:
+                        if hasattr(items, "all"):
+                            items = items.all()
+                    ret_data[key] = []
+                    for item in items:
+                        ret_data[key].append(
+                            item.to_dict(
+                                show=list(show),
+                                _hide=list(_hide),
+                                _path=("%s.%s" % (_path, key.lower())),
+                            )
+                        )
+                else:
+                    if (
+                        self.__mapper__.relationships[key].query_class is not None
+                        or self.__mapper__.relationships[key].instrument_class
+                        is not None
+                    ):
+                        item = getattr(self, key)
+                        if item is not None:
+                            ret_data[key] = item.to_dict(
+                                show=list(show),
+                                _hide=list(_hide),
+                                _path=("%s.%s" % (_path, key.lower())),
+                            )
+                        else:
+                            ret_data[key] = None
+                    else:
+                        ret_data[key] = getattr(self, key)
+
+        for key in list(set(properties) - set(columns) - set(relationships)):
+            if key.startswith("_"):
+                continue
+            if not hasattr(self.__class__, key):
+                continue
+            attr = getattr(self.__class__, key)
+            if not (isinstance(attr, property) or isinstance(attr, QueryableAttribute)):
+                continue
+            check = "%s.%s" % (_path, key)
+            if check in _hide or key in hidden:
+                continue
+            if check in show or key in default:
+                val = getattr(self, key)
+                if hasattr(val, "to_dict"):
+                    ret_data[key] = val.to_dict(
+                        show=list(show),
+                        _hide=list(_hide),
+                        _path=("%s.%s" % (_path, key.lower())),
+                    )
+                else:
+                    try:
+                        ret_data[key] = json.loads(json.dumps(val))
+                    except:
+                        pass
+
+        return ret_data
+
+
+class User(UserMixin, BaseModel):
     __table_name__ = "users"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
@@ -28,11 +145,11 @@ class User(UserMixin, db.Model):
         sql.String(255)
     )
     admin: orm.Mapped[bool] = orm.mapped_column(sql.Boolean, default=False)
-    orders: orm.Mapped["Order"] = orm.relationship(
-        back_populates="user", order_by="Order.created_at"
-    )
     created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
         sql.DateTime, default=datetime.now(timezone.utc)
+    )
+    orders: orm.Mapped[List["Order"]] = orm.relationship(
+        back_populates="user", lazy="dynamic"
     )
 
     def __repr__(self):
@@ -44,9 +161,8 @@ class User(UserMixin, db.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-    def avatar(self, size):
-        digest = md5(self.email.lower().encode("utf-8")).hexdigest()
-        return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}"
+    def current_order(self):
+        return self.orders.filter(Order.status == "created").first()
 
     @property
     def password(self):
@@ -67,7 +183,7 @@ class User(UserMixin, db.Model):
         return db.session.get(User, int(id))
 
 
-class ProductCategory(db.Model):
+class ProductCategory(BaseModel):
     __table_name__ = "product_categories"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
@@ -82,7 +198,7 @@ class ProductCategory(db.Model):
         return self.name
 
 
-class Product(db.Model):
+class Product(BaseModel):
     __table_name__ = "products"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
@@ -105,16 +221,18 @@ class Product(db.Model):
         return self.name
 
 
-class Order(db.Model):
+class Order(BaseModel):
     __table_name__ = "orders"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
     user_id: orm.Mapped[int] = orm.mapped_column(sql.ForeignKey(User.id), index=True)
-    user: orm.Mapped["User"] = orm.relationship(back_populates="orders")
-    items: orm.Mapped["OrderItem"] = orm.relationship(back_populates="order")
     status: orm.Mapped[str] = orm.mapped_column(sql.String(20), default="created")
     created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
         sql.DateTime, default=datetime.now(timezone.utc)
+    )
+    user: orm.Mapped["User"] = orm.relationship(back_populates="orders")
+    items: orm.Mapped[List["OrderItem"]] = orm.relationship(
+        back_populates="order", lazy="dynamic"
     )
 
     def __repr__(self):
@@ -124,10 +242,12 @@ class Order(db.Model):
         return self.id
 
     def total(self):
+        if not self.items:
+            return 0
         return sum([item.product.price * item.quantity for item in self.items])
 
 
-class OrderItem(db.Model):
+class OrderItem(BaseModel):
     __table_name__ = "order_items"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
@@ -135,9 +255,13 @@ class OrderItem(db.Model):
     product_id: orm.Mapped[int] = orm.mapped_column(
         sql.ForeignKey(Product.id), index=True
     )
-    product: orm.Mapped[Product] = orm.relationship(back_populates="order_items")
     order_id: orm.Mapped[int] = orm.mapped_column(sql.ForeignKey(Order.id), index=True)
-    order: orm.Mapped[Order] = orm.relationship(back_populates="items")
+    product: orm.Mapped["Product"] = orm.relationship(back_populates="order_items")
+    order: orm.Mapped["Order"] = orm.relationship(back_populates="items")
+    created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
+        sql.DateTime,
+        default=lambda: datetime.now(timezone.utc),
+    )
 
     def __repr__(self):
         return "<OrderItem {}>".format(self.product.name)
