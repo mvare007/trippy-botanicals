@@ -4,7 +4,8 @@ from flask_login import current_user, login_required
 
 from app import db
 from app.main import bp
-from app.models import Order, OrderItem, Product, ProductCategory, User
+from app.main.forms import CheckoutForm
+from app.models import Order, OrderItem, Product, ProductCategory
 
 
 @bp.route("/")
@@ -103,7 +104,7 @@ def get_current_order():
                     "items.product",
                     "items.product.id",
                     "items.product.name",
-                    "items.product.price"
+                    "items.product.price",
                 ]
             ),
             "total": order.total(),
@@ -116,7 +117,19 @@ def get_current_order():
 def delete_order_item(id):
     """Delete an order item ."""
     item = db.first_or_404(sql.select(OrderItem).where(OrderItem.id == id))
-    db.session.delete(item)
-    db.session.commit()
+    if item.quantity > 1:
+        item.quantity -= 1
+        db.session.commit()
+    else:
+        db.session.delete(item)
+        db.session.commit()
 
     return jsonify({"message": "Order Item deleted successfully"})
+
+
+@bp.route("/checkout")
+@login_required
+def checkout():
+    """Checkout current order"""
+    form = CheckoutForm()
+    return render_template("checkout.html", form=form)

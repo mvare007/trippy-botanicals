@@ -8,7 +8,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles.css')}}"
+    />
 
     {% block styles %}
     <!-- Bootstrap CSS -->
@@ -67,38 +71,47 @@
           >
             <ul class="navbar-nav">
               {% if current_user.is_authenticated %}
-								<li class="nav-item">
-									<a
-										class="{% if active_page == 'profile' %} nav-link active {% else %} nav-link {% endif %}"
-										href="{{ url_for('main.profile') }}"
-                    >
-										Profile
-									</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="{{ url_for('auth.logout') }}"> Logout </a>
-								</li>
+              <li class="nav-item">
+                <a
+                  class="{% if active_page == 'profile' %} nav-link active {% else %} nav-link {% endif %}"
+                  href="{{ url_for('main.profile') }}"
+                >
+                  Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                  Logout
+                </a>
+              </li>
               {% else %}
-								<li class="nav-item">
-									<a
-										id="login"
-										class="{% if active_page == 'login' %} nav-link active {% else %} nav-link {% endif %}"
-										href="{{ url_for('auth.login') }}"
-									>
-										Login
-									</a>
-								</li>
-								<li class="nav-item">
-									<a
-										class="{% if active_page == 'register' %} nav-link active {% else %} nav-link {% endif %}"
-										href="{{ url_for('auth.register') }}"
-									>
-										Register
-									</a>
-								</li>
+              <li class="nav-item">
+                <a
+                  id="login"
+                  class="{% if active_page == 'login' %} nav-link active {% else %} nav-link {% endif %}"
+                  href="{{ url_for('auth.login') }}"
+                >
+                  Login
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="{% if active_page == 'register' %} nav-link active {% else %} nav-link {% endif %}"
+                  href="{{ url_for('auth.register') }}"
+                >
+                  Register
+                </a>
+              </li>
               {% endif %}
               <li class="nav-item">
-                <a id="cart" class="nav-link icon-link icon-link-hover" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                <a
+                  id="cart"
+                  class="nav-link icon-link icon-link-hover"
+                  href="#"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasRight"
+                  aria-controls="offcanvasRight"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -120,83 +133,119 @@
     </nav>
     <div class="container">
       <!-- View Cart -->
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div
+        class="offcanvas offcanvas-end"
+        tabindex="-1"
+        id="offcanvasRight"
+        aria-labelledby="offcanvasRightLabel"
+      >
         <div class="offcanvas-header">
           <h5 id="offcanvasRightLabel">Cart</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close text-reset"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="offcanvas-body">
-          <table class="table table-primary table-striped">
+          <table class="table table-primary table-striped table-sm">
             <thead>
               <tr>
                 <th scope="col">Product</th>
                 <th scope="col">Unit Price</th>
                 <th scope="col">Quantity</th>
+                <th scope="col"></th>
               </tr>
             </thead>
-            <tbody id="cart-table-body">
-            </tbody>
+            <tbody id="cart-table-body"></tbody>
             <tfoot>
               <tr>
                 <td colspan="1"><strong>Total</strong></td>
-                <td id="cart-total" colspan="2">0</td>
+                <td id="cart-total" colspan="3">0</td>
               </tr>
             </tfoot>
           </table>
-          <a class="btn btn-primary" href="#">Checkout</a>
+          <a class="btn btn-primary" href="{{ url_for('main.checkout') }}">Checkout</a>
         </div>
       </div>
 
       <!-- Page content -->
-      {% block content %} {% endblock %}
+      {% block content %} {% endblock %} {% block scripts %}
+      <script>
+        const cart = document.getElementById("cart");
+        cart.addEventListener("click", (event) => {
+          event.preventDefault();
+          displayCart();
+        });
 
-      {% block scripts %}
-        <script>
-          const cart = document.getElementById("cart");
-          cart.addEventListener("click", (event) => {
-            event.preventDefault();
-            displayCart()
+        async function displayCart() {
+          const response = await fetch("/current_order", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           });
+          const data = await response.json();
 
-          async function displayCart() {
-            const response = await fetch("/current_order", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-            const data = await response.json();
-
-            if (response.ok) {
-              appendOrderItems(data)
-            } else {
-              alert("Oops! Something went wrong. Please try again.");
-            }
+          if (response.ok) {
+            appendOrderItems(data);
+          } else {
+            alert("Oops! Something went wrong. Please try again.");
           }
+        }
 
-          function appendOrderItems(orderData) {
-            const { order, total } = orderData;
+        function appendOrderItems(orderData) {
+          const { order, total } = orderData;
 
-            const cartTableBody = document.getElementById("cart-table-body");
-            cartTableBody.innerHTML = "";
+          const cartTableBody = document.getElementById("cart-table-body");
+          cartTableBody.innerHTML = "";
 
-            order.items.forEach((item) => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
+          order.items.forEach((item) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
                 <td>${item.product.name}</td>
                 <td>${item.product.price} €</td>
                 <td>${item.quantity}</td>
+                <td><button class="btn btn-danger delete-order-item" data-order-item-id="${item.id}">X</button></td>
               `;
 
-              cartTableBody.appendChild(tr);
-            });
+            cartTableBody.appendChild(tr);
+          });
 
-            const cartTotal = document.getElementById("cart-total");
-            cartTotal.innerText = total + " €";
+          const cartTotal = document.getElementById("cart-total");
+          cartTotal.innerText = total + " €";
+
+          bindClickListenerToDeleteOrderItemBtn()
+        }
+
+        function bindClickListenerToDeleteOrderItemBtn() {
+          const deleteButtons = document.querySelectorAll(".delete-order-item");
+          deleteButtons.forEach((button) => {
+            const orderItemId = button.getAttribute("data-order-item-id");
+
+            button.addEventListener("click", (event) => {
+              deleteOrderIem(orderItemId);
+            });
+          });
+        }
+
+        async function deleteOrderIem(orderItemId) {
+          const response = await fetch(`/order_items/${orderItemId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            displayCart();
+          } else {
+            alert("Oops! Something went wrong. Please try again.");
           }
-        </script>
-        {{ bootstrap.load_js() }}
-      {% endblock %}
+        }
+      </script>
+      {{ bootstrap.load_js() }} {% endblock %}
     </div>
   </body>
 </html>

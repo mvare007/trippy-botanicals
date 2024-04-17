@@ -10,6 +10,7 @@ class Config:
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     DATABASE_NAME = "trippy"
     BOOTSTRAP_BOOTSWATCH_THEME = "lux"
+    WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY")
 
 
 class ProductionConfig(Config):

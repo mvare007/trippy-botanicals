@@ -6,86 +6,86 @@
     <form action="" method="post">
         {{ form.hidden_tag() }}
 
-				<p>
+				<div class="form-group">
             {{ form.first_name.label }}<br>
             {{ form.first_name(size=32) }}<br>
             {% for error in form.first_name.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
-        </p>
+        </div>
 
-				<p>
+				<div class="form-group">
             {{ form.last_name.label }}<br>
             {{ form.last_name(size=32) }}<br>
             {% for error in form.last_name.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
-        </p>
+        </div>
 
-				<p>
+				<div class="form-group"></div>
             {{ form.email.label }}<br>
             {{ form.email(size=64) }}<br>
             {% for error in form.email.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
-        </p>
+			</div>
 
-				<p>
+			<div class="form-group">
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}<br>
             {% for error in form.password.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
-        </p>
+			</div>
 
-				<p>
+			<div class="form-group">
             {{ form.password2.label }}<br>
             {{ form.password2(size=32) }}<br>
             {% for error in form.password2.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
-        </p>
+        </div>
 
-				<p>
+				<div class="form-group">
 					{{ form.address.label }}<br>
 					{{ form.address(size=32) }}<br>
 					{% for error in form.address.errors %}
 					<span class="text-danger">{{ error }}</span>
 					{% endfor %}
-			</p>
+			</div>
 
-			<p>
+			<div class="form-group">
 					{{ form.zip_code.label }}<br>
 					{{ form.zip_code(size=32) }}<br>
 					{% for error in form.zip_code.errors %}
 					<span class="text-danger">{{ error }}</span>
 					{% endfor %}
-			</p>
+			</div>
 
-			<p>
+			<div class="form-group">
 					{{ form.location.label }}<br>
 					{{ form.location(size=32) }}<br>
 					{% for error in form.location.errors %}
 					<span class="text-danger">{{ error }}</span>
 					{% endfor %}
-			</p>
+			</div>
 
-			<p>
+			<div class="form-group">
 					{{ form.phone.label }}<br>
 					{{ form.phone(size=32) }}<br>
 					{% for error in form.phone.errors %}
 					<span class="text-danger">{{ error }}</span>
 					{% endfor %}
-			</p>
+			</div>
 
-			<p>
+			<div class="form-group">
 					{{ form.vat_number.label }}<br>
 					{{ form.vat_number(size=32) }}<br>
 					{% for error in form.vat_number.errors %}
 					<span class="text-danger">{{ error }}</span>
 					{% endfor %}
-			</p>
+			</div>
 
-			<p>{{ form.submit() }}</p>
+			<div class="form-group"></div>{{ form.submit() }}</div>
     </form>
 {% endblock %}
