@@ -11,6 +11,7 @@ class Config:
     DATABASE_NAME = "trippy"
     BOOTSTRAP_BOOTSWATCH_THEME = "lux"
     WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY")
+    MAX_CONTENT_LENGTH = 25 * 1000 * 1000
 
 
 class ProductionConfig(Config):
@@ -29,6 +30,8 @@ class DevelopmentConfig(Config):
     DATABASE_USER = "root"
     DATABASE_PASSWORD = "root"
     SQLALCHEMY_ECHO = True
+    UPLOAD_FOLDER = "/tmp/uploads"
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
     # Create Development Database if it doesn't exist
     if not os.path.exists(os.path.join(base_dir, "tmp")):
