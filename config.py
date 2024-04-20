@@ -1,6 +1,8 @@
 import os
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+UPLOAD_FOLDER = "/tmp/uploads"
 
 
 class Config:
@@ -10,8 +12,9 @@ class Config:
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     DATABASE_NAME = "trippy"
     BOOTSTRAP_BOOTSWATCH_THEME = "lux"
+    FLASK_ADMIN_SWATCH = "cyborg"
     WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY")
-    MAX_CONTENT_LENGTH = 25 * 1000 * 1000
+    MAX_CONTENT_LENGTH = 25 * 1000 * 1000  # 25MB
 
 
 class ProductionConfig(Config):
@@ -30,8 +33,6 @@ class DevelopmentConfig(Config):
     DATABASE_USER = "root"
     DATABASE_PASSWORD = "root"
     SQLALCHEMY_ECHO = True
-    UPLOAD_FOLDER = "/tmp/uploads"
-    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
     # Create Development Database if it doesn't exist
     if not os.path.exists(os.path.join(base_dir, "tmp")):
