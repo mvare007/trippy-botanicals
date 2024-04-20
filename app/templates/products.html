@@ -1,97 +1,17 @@
 {% extends "layout.html" %} {% block title %} Products {% endblock %} {% set
-active_page = "products" %} {% block content %}
-
-<input
-  type="hidden"
-  id="current-order-id"
-  name="current-order-id"
-  value="{{ current_user.current_order().id }}"
-/>
+active_page = "products" %}
+{% block content %}
 
 <h1 class="mt-5">Products</h1>
-<hr />
-<div class="cards mt-5">
+<hr/>
+<div class="cards">
   {% for product in products %}
-  <div class="card-product d-flex">
-    <img
-      src="https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/skateboard.jpg"
-    />
-    <div class="card-product-infos">
-      <h2 class="text-dark">{{ product.name }}</h2>
-      <p class="text-dark">{{ product.description }}</p>
-    </div>
-    <input
-      type="hidden"
-      id="product-id"
-      name="product-id"
-      value="{{ product.id }}"
-    />
-    <button
-      class="add-product-to-cart btn btn-light align-self-stretch flex-fill"
-    >
-      Add to cart
-    </button>
-  </div>
+    {% include  "partials/product_card.html" %}
   {% endfor %}
 </div>
-{% endblock %} {% block scripts %} {{ super() }}
-<script>
-  async function addProductToCart(productId) {
-    const currentOrderId = getCurrentOrderId();
+{% endblock %}
 
-    const response = await fetch(
-      `/orders/${currentOrderId}/update?product_id=${productId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          product_id: productId,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok) {
-      alert("Product added to cart!");
-    } else {
-      alert("Oops! Something went wrong. Please try again.");
-    }
-  }
-
-  async function createOrder() {
-    const response = await fetch("/orders", {
-      method: "POST",
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      alert("Order created!");
-      document.getElementById("current-order-id").value = data.id;
-    } else {
-      alert("Oops! Something went wrong. Please try again.");
-    }
-  }
-
-  function getCurrentOrderId() {
-    let currentOrderId = document.getElementById("current-order-id").value;
-    if (!currentOrderId) {
-      currentOrderId = createOrder()["id"];
-    }
-
-    return currentOrderId;
-  }
-
-  const productOrderBtns = document.querySelectorAll(".add-product-to-cart");
-
-  productOrderBtns.forEach((btn) => {
-    btn.addEventListener("click", (event) => {
-      let productId = btn.previousElementSibling.value;
-
-      addProductToCart(productId);
-    });
-  });
-</script>
+{% block scripts %} {{ super() }}
+<script  src="{{ url_for('static', filename='javascript/cartHandler.js')}}"></script>
 
 {% endblock %}

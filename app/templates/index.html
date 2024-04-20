@@ -1,36 +1,46 @@
 {% extends "layout.html" %}
 {% set active_page = "index" %}
 
-{% block title %}
-	Home
-{% endblock %}
-
 {% block content %}
 
-<div class="banner my-5" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url({{ url_for('static', filename='logo.png') }});">
-  <div class="container">
-    <h1 class="text-warning"><strong>Trippy Botanicals</strong></h1>
-    <p>Leaf your worries behind with our plants.</p>
-    <a class="btn btn-light" href="#product-categories">Shop Now</a>
-  </div>
-</div>
+<div class="row">
+	<div class="col-12 mt-5">
 
-<hr>
-<div id="product-categories" class="cards">
-	{% for category in product_categories %}
-		<div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/breakfast.jpg)">
-			<a href="{{ url_for('main.products', category_id=category.id) }}">{{ category.name }}</a>
+		<div class="banner" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url({{ url_for('static', filename='images/logo.png') }});">
+			<div class="container">
+				<h2><strong>Trippy Botanicals</strong></h2>
+				<p>Leaf your worries behind with our plants</p>
+				<a class="btn btn-light" href="#product-categories">Shop Now</a>
+			</div>
 		</div>
-	{% endfor %}
+	</div>
+
+	<div class="col-12 mt-5">
+		<h4>Featured Products</h4>
+		<hr>
+		<div class="cards">
+			{% for product in featured_products %}
+					{% include  "partials/product_card.html" %}
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="col-12 mt-5">
+		<h4>Product Categories</h4>
+		<hr>
+		<div id="product-categories" class="cards">
+			{% for category in product_categories %}
+				<div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/breakfast.jpg)">
+					<a href="{{ url_for('main.products', category_id=category.id) }}">{{ category.name }}</a>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
+	<script  src="{{ url_for('static', filename='javascript/cartHandler.js')}}"></script>
 	{{ super() }}
-	<!-- Additional scripts -->
-	<script>
-		console.log('Home page script');
-	</script>
-
 {% endblock %}
