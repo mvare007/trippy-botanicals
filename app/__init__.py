@@ -52,7 +52,9 @@ def create_app():
 
     admin = Admin(app, name="Trippy Botanicals", template_mode="bootstrap3")
     admin.add_view(ModelView(models.User, db.session))
+    admin.add_view(ModelView(models.ProductCategory, db.session))
     admin.add_view(ModelView(models.Product, db.session))
+    admin.add_view(ModelView(models.Order, db.session))
 
     from app.main import bp as main_bp
 
@@ -61,10 +63,6 @@ def create_app():
     from app.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp)
-
-    # from app.admin import bp as admin_bp
-
-    # app.register_blueprint(admin_bp, url_prefix="/admin")
 
     from app.cli import bp as cli_bp
 
