@@ -162,7 +162,7 @@ class User(UserMixin, BaseModel):
         return f"{self.first_name} {self.last_name}"
 
     def current_order(self):
-        return self.orders.filter(Order.status == "created").first()
+        return self.orders.filter(Order.status == "Pending").first()
 
     @property
     def password(self):
@@ -220,13 +220,20 @@ class Product(BaseModel):
     def __str__(self):
         return self.name
 
+    def is_available(self):
+        return self.stock > 0
+
+    @staticmethod
+    def featured(count=9):
+        return Product.query.order_by(Product.stock).limit(count).all()
+
 
 class Order(BaseModel):
     __table_name__ = "orders"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
     user_id: orm.Mapped[int] = orm.mapped_column(sql.ForeignKey(User.id), index=True)
-    status: orm.Mapped[str] = orm.mapped_column(sql.String(20), default="created")
+    status: orm.Mapped[str] = orm.mapped_column(sql.String(20), default="Pending")
     created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
         sql.DateTime, default=datetime.now(timezone.utc)
     )

@@ -1,20 +1,36 @@
+import os
+
 import sqlalchemy as sql
-from flask import jsonify, render_template, request
+from flask import (
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_login import current_user, login_required
+from werkzeug.utils import secure_filename
 
 from app import db
 from app.main import bp
 from app.main.forms import CheckoutForm
 from app.models import Order, OrderItem, Product, ProductCategory
+from config import ALLOWED_EXTENSIONS, UPLOAD_FOLDER
 
 
 @bp.route("/")
 @bp.route("/index")
 def index():
     product_categories = ProductCategory.query.all()
+    featured_products = Product.featured()
 
     return render_template(
-        "index.html", title="Home", product_categories=product_categories
+        "index.html",
+        title="Home",
+        product_categories=product_categories,
+        featured_products=featured_products,
     )
 
 
@@ -33,7 +49,7 @@ def products(category_id):
     else:
         products = Product.query.all()
 
-    return render_template("products.html", products=products)
+    return render_template("products.html", title="Products", products=products)
 
 
 @bp.route("/orders/<id>/update", methods=["PATCH"])
@@ -112,6 +128,20 @@ def get_current_order():
     )
 
 
+@bp.route("/current_order/items_count")
+@login_required
+def current_order_items_count():
+    """Get number of items in the current order"""
+    current_order = current_user.current_order()
+    if not current_order:
+        return jsonify({"items_count": 0})
+
+    items_count = 0
+    for item in current_order.items:
+        items_count += item.quantity
+    return jsonify({"items_count": items_count})
+
+
 @bp.route("/order_items/<id>", methods=["DELETE"])
 @login_required
 def delete_order_item(id):
@@ -127,9 +157,51 @@ def delete_order_item(id):
     return jsonify({"message": "Order Item deleted successfully"})
 
 
-@bp.route("/checkout")
+@bp.route("/checkout", methods=["GET", "POST"])
 @login_required
 def checkout():
     """Checkout current order"""
     form = CheckoutForm()
-    return render_template("checkout.html", form=form)
+    if form.validate_on_submit():
+        order = current_user.current_order()
+        order.status = "Processed"
+        db.session.commit()
+        flash("Order processed successfully!")
+        return redirect(url_for("main.index"))
+    return render_template("checkout.html", title="Checkout", form=form)
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@bp.route("/", methods=["GET", "POST"])
+@login_required
+def upload_file():
+    if request.method == "POST":
+        # check if the post request has the file part
+        if "file" not in request.files:
+            flash("No file part")
+            return redirect(request.url)
+        file = request.files["file"]
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == "":
+            flash("No selected file")
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            return redirect(url_for("download_file", name=filename))
+    return """
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    """
+
+
+@bp.route("/uploads/<name>")
+@login_required
+def download_file(name):
+    return send_from_directory(UPLOAD_FOLDER, name)
