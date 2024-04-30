@@ -1,0 +1,99 @@
+{% extends "layout.html" %} {% set active_page = "challenges" %} {% block
+content %}
+  <h1>Challenges</h1>
+  <hr>
+
+  <div class="row align-items-center">
+    <div class="col-md-6">
+      <img id="plant-photo" src="{{url_for('static', filename='images/banner.jpeg')}}" alt="Banner Image" class="img-fluid rounded  mb-4">
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 shadow">
+        <div class="card-body">
+          <h3 class="mb-3">Discover Plant Species!</h3>
+          <p class="lead mb-4">Assist fellow members and earn rewards by identifying plant species.</p>
+          <input id="challenge-input" class="form-control" type="text" disabled>
+          <button id="challenge-btn" class="my-3 btn btn-success">Start now →</button>
+          <hr>
+          <h3 class="mt-5">Seek Identification for Your Plants</h3>
+          <p class="lead mb-5">Upload photos of your plants and get them identified by experts.</p>
+
+          <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              <label for="photo" class="form-label">Upload Photo:</label>
+              <input type="file" class="form-control" id="photo" name="photo" required>
+              {% for error in form.photo.errors %}
+                <div class="text-danger">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+	{{ super() }}
+  <script>
+
+    const challengeBtn = document.getElementById('challenge-btn');
+    const challengeInput = document.getElementById('challenge-input');
+    bindClickOnChallengeButton();
+
+    function fetchUnsplashPhoto() {
+      challengeBtn.disabled = true;
+      fetch('https://source.unsplash.com/800x600/?plants')
+        .then(response => {
+          document.getElementById('plant-photo').src = response.url;
+          challengeBtn.disabled = false;
+        });
+    }
+
+    function prepareChallenge() {
+      challengeBtn.innerText = 'Skip'
+      challengeBtn.classList.remove('btn-success');
+      challengeBtn.classList.add('btn-info');
+      challengeInput.value = '';
+      challengeInput.disabled = false;
+      challengeInput.placeholder = 'Enter plant species here';
+      createAndInsertSubmitBtn()
+      fetchUnsplashPhoto();
+    }
+
+    function createAndInsertSubmitBtn() {
+      if (document.getElementById('submit-btn')) return;
+
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.id = 'submit-btn';
+      submitBtn.classList.add('btn', 'btn-warning', 'my-3', 'mx-1');
+      submitBtn.innerText = 'Submit';
+      bindClickOnSubmitButton(submitBtn)
+      challengeBtn.insertAdjacentElement('afterend', submitBtn);
+    }
+
+    function bindClickOnChallengeButton() {
+      challengeBtn.addEventListener('click', prepareChallenge);
+    }
+
+    function bindClickOnSubmitButton(submitBtn) {
+      submitBtn.addEventListener('click', submitChallenge);
+    }
+
+    function submitChallenge() {
+      const plantSpecies = challengeInput.value;
+      if (plantSpecies === 'Monstera') {
+        alert('Congratulations! You have earned 10 points!');
+      } else {
+        alert('Sorry, try again!');
+      }
+      fetchUnsplashPhoto();
+    }
+
+  </script>
+{% endblock %}

@@ -5,7 +5,18 @@
   <div class="card-product-infos">
     <h2 class="text-dark">{{ product.name }}</h2>
     <p class="text-dark">{{ product.description }}</p>
-    <span class="badge bg-info mt-2">{{ product.price }}€</span>
+    <div class="product-details">
+      {% if product.price == 0 %}
+        <span class="mt-2 badge bg-success">
+          Free
+        </span>
+        {% else %}
+        <span class="mt-2 badge bg-info">
+          {{ product.price }}€
+        </span>
+      {% endif %}
+      <span class="badge bg-warning mt-2"><small>{{ product.stock }} in stock </small></span>
+    </div>
   </div>
   <input
     type="hidden"

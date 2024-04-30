@@ -20,6 +20,7 @@
     {{ bootstrap.load_css() }} {% endblock %}
 
     <title>{% block title %}Trippy Botanicals{% endblock %}</title>
+
     {% endblock %}
   </head>
   <body>
@@ -59,8 +60,8 @@
             </li>
             <li class="nav-item">
               <a
-                class="{% if id == active_page %} nav-link active {% else %} nav-link {% endif %}"
-                href="#"
+                class="{% if active_page == 'challenges' %} nav-link active {% else %} nav-link {% endif %}"
+                href="{{ url_for('main.challenges') }}"
               >
                 Challenges
               </a>
@@ -77,7 +78,7 @@
                   class="{% if active_page == 'profile' %} nav-link active {% else %} nav-link {% endif %}"
                   href="{{ url_for('main.profile') }}"
                 >
-                  Profile
+                  {{current_user.first_name}}
                 </a>
               </li>
               <li class="nav-item">
@@ -133,8 +134,18 @@
         </div>
       </div>
     </nav>
-    <div class="container">
-      <span style="padding-bottom: 500px;"></span>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes" style="margin-top: 800px;">
+          {% for message in messages %}
+            <li class="alert alert-primary">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="container" style="margin-top: 120px;">
       <!-- View Cart -->
       <div
         class="offcanvas offcanvas-end"

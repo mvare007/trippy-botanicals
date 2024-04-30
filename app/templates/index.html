@@ -16,16 +16,6 @@
 	</div>
 
 	<div class="col-12 mt-5">
-		<h4>Featured Products</h4>
-		<hr>
-		<div class="cards">
-			{% for product in featured_products %}
-					{% include  "partials/product_card.html" %}
-			{% endfor %}
-		</div>
-	</div>
-
-	<div class="col-12 mt-5">
 		<h4>Product Categories</h4>
 		<hr>
 		<div id="product-categories" class="cards">
@@ -33,6 +23,16 @@
 				<div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/breakfast.jpg)">
 					<a href="{{ url_for('main.products', category_id=category.id) }}">{{ category.name }}</a>
 				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="col-12 my-5">
+		<h4>Featured Products</h4>
+		<hr>
+		<div class="cards">
+			{% for product in featured_products %}
+					{% include  "partials/product_card.html" %}
 			{% endfor %}
 		</div>
 	</div>

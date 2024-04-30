@@ -3,89 +3,94 @@
 
 {% block content %}
     <h1>Register</h1>
-    <form action="" method="post">
+		<hr>
+    <form action="" method="post" class="needs-validation" novalidate>
         {{ form.hidden_tag() }}
 
-				<div class="form-group">
-            {{ form.first_name.label }}<br>
-            {{ form.first_name(size=32) }}<br>
-            {% for error in form.first_name.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
+				<div class="row">
+					<div class="col-6 mb-3">
+							{{ form.first_name.label(class="form-label") }}
+							{{ form.first_name(class="form-control", size=32) }}
+							{% for error in form.first_name.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-				<div class="form-group">
-            {{ form.last_name.label }}<br>
-            {{ form.last_name(size=32) }}<br>
-            {% for error in form.last_name.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
+					<div class="col-6 mb-3">
+							{{ form.last_name.label(class="form-label") }}
+							{{ form.last_name(class="form-control", size=32) }}
+							{% for error in form.last_name.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-				<div class="form-group"></div>
-            {{ form.email.label }}<br>
-            {{ form.email(size=64) }}<br>
-            {% for error in form.email.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-			</div>
+					<div class="col-12 mb-3">
+							{{ form.email.label(class="form-label") }}
+							{{ form.email(class="form-control", size=64) }}
+							{% for error in form.email.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group">
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-			</div>
+					<div class="col-6 mb-3">
+							{{ form.password.label(class="form-label") }}
+							{{ form.password(class="form-control", size=32) }}
+							{% for error in form.password.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group">
-            {{ form.password2.label }}<br>
-            {{ form.password2(size=32) }}<br>
-            {% for error in form.password2.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
+					<div class="col-6 mb-3">
+							{{ form.password2.label(class="form-label") }}
+							{{ form.password2(class="form-control", size=32) }}
+							{% for error in form.password2.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-				<div class="form-group">
-					{{ form.address.label }}<br>
-					{{ form.address(size=32) }}<br>
-					{% for error in form.address.errors %}
-					<span class="text-danger">{{ error }}</span>
-					{% endfor %}
-			</div>
+					<div class="col-12 mb-3">
+							{{ form.address.label(class="form-label") }}
+							{{ form.address(class="form-control", size=32) }}
+							{% for error in form.address.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group">
-					{{ form.zip_code.label }}<br>
-					{{ form.zip_code(size=32) }}<br>
-					{% for error in form.zip_code.errors %}
-					<span class="text-danger">{{ error }}</span>
-					{% endfor %}
-			</div>
+					<div class="col-6 mb-3">
+							{{ form.zip_code.label(class="form-label") }}
+							{{ form.zip_code(class="form-control", size=32) }}
+							{% for error in form.zip_code.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group">
-					{{ form.location.label }}<br>
-					{{ form.location(size=32) }}<br>
-					{% for error in form.location.errors %}
-					<span class="text-danger">{{ error }}</span>
-					{% endfor %}
-			</div>
+					<div class="col-6 mb-3">
+							{{ form.location.label(class="form-label") }}
+							{{ form.location(class="form-control", size=32) }}
+							{% for error in form.location.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group">
-					{{ form.phone.label }}<br>
-					{{ form.phone(size=32) }}<br>
-					{% for error in form.phone.errors %}
-					<span class="text-danger">{{ error }}</span>
-					{% endfor %}
-			</div>
+					<div class="col-12 mb-3">
+							{{ form.phone.label(class="form-label") }}
+							{{ form.phone(class="form-control", size=32) }}
+							{% for error in form.phone.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group">
-					{{ form.vat_number.label }}<br>
-					{{ form.vat_number(size=32) }}<br>
-					{% for error in form.vat_number.errors %}
-					<span class="text-danger">{{ error }}</span>
-					{% endfor %}
-			</div>
+					<div class="col-12 mb-5">
+							{{ form.vat_number.label(class="form-label") }}
+							{{ form.vat_number(class="form-control", size=32) }}
+							{% for error in form.vat_number.errors %}
+									<div class="text-danger">{{ error }}</div>
+							{% endfor %}
+					</div>
 
-			<div class="form-group"></div>{{ form.submit() }}</div>
+					<div class="col-12 text-center">
+						{{ form.submit(class="btn btn-primary") }}
+					</div>
+				</div>
     </form>
 {% endblock %}
