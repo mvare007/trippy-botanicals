@@ -2,6 +2,7 @@ import os
 
 import sqlalchemy as sql
 from flask import (
+    current_app,
     flash,
     jsonify,
     redirect,
@@ -15,9 +16,8 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from app.main import bp
-from app.main.forms import CheckoutForm
+from app.main.forms import ChallengeForm, CheckoutForm
 from app.models import Order, OrderItem, Product, ProductCategory
-from config import ALLOWED_EXTENSIONS, UPLOAD_FOLDER
 
 
 @bp.route("/")
@@ -171,28 +171,36 @@ def checkout():
     return render_template("checkout.html", title="Checkout", form=form)
 
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+def allowed_file(file):
+    filename = file.filename
+    breakpoint()
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower()
+        in current_app.config["ALLOWED_EXTENSIONS"]
+        and file.content_length < current_app.config["MAX_CONTENT_LENGTH"]
+    )
 
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/upload_file", methods=["GET", "POST"])
 @login_required
 def upload_file():
     if request.method == "POST":
-        # check if the post request has the file part
+
         if "file" not in request.files:
             flash("No file part")
             return redirect(request.url)
         file = request.files["file"]
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
+
         if file.filename == "":
             flash("No selected file")
             return redirect(request.url)
-        if file and allowed_file(file.filename):
+
+        if file and allowed_file(file):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
             return redirect(url_for("download_file", name=filename))
+
     return """
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
@@ -201,7 +209,22 @@ def upload_file():
     """
 
 
-@bp.route("/uploads/<name>")
+@bp.route("/downloads/<name>")
 @login_required
 def download_file(name):
-    return send_from_directory(UPLOAD_FOLDER, name)
+    if name is None:
+        return redirect(url_for("main.index"))
+    return send_from_directory(current_app.config["UPLOAD_FOLDER"], name)
+
+
+@bp.route("/challenges", methods=["GET", "POST"])
+@login_required
+def challenges():
+    form = ChallengeForm()
+    if request.method == "POST" and form.validate_on_submit():
+        file = form.photo.data
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
+        flash("Photo uploaded successfully!")
+        return redirect(url_for("main.challenges"))
+    return render_template("challenges.html", form=form)
