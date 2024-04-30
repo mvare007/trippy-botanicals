@@ -84,7 +84,7 @@
 
 .card-product {
   overflow: hidden;
-  height: 120px;
+  height: 150px;
   background: white;
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   display: flex;
@@ -112,6 +112,19 @@
 }
 
 .card-product .card-product-infos {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: calc(100% - 120px);
   padding: 16px;
   width: 60%;
+}
+
+.card-product .product-details {
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
 }
