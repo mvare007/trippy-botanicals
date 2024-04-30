@@ -36,7 +36,7 @@ migrate = Migrate()
 
 # Flask Login - https://flask-login.readthedocs.io/en/latest/
 login_manager = LoginManager()
-login_manager.login_view = "login"
+login_manager.login_view = "auth.login"
 login_manager.login_message = "Please log in to access this page."
 
 
