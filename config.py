@@ -1,8 +1,6 @@
 import os
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-UPLOAD_FOLDER = "/tmp/uploads"
 
 
 class Config:
@@ -14,7 +12,9 @@ class Config:
     BOOTSTRAP_BOOTSWATCH_THEME = "lux"
     FLASK_ADMIN_SWATCH = "cyborg"
     WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY")
-    MAX_CONTENT_LENGTH = 25 * 1000 * 1000  # 25MB
+    UPLOAD_FOLDER = f"{base_dir}/app/static/uploads"
+    MAX_CONTENT_LENGTH = 10 * 1000 * 1000  # 10MB
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 
 class ProductionConfig(Config):
