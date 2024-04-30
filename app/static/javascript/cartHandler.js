@@ -1,8 +1,9 @@
 (function () {
   const cartBtn = document.getElementById("cart");
-  if (!cartBtn) return;
-
+  const currentOrderHiddenInput = document.getElementById("current-order-id")
   const productOrderBtns = document.querySelectorAll(".add-product-to-cart");
+  disableProductOrderBtns(true) // Disable product order buttons if the user isn't logged in
+  if (!cartBtn) return;
 
   productOrderBtns.forEach((btn) => {
     btn.addEventListener("click", (_event) => {
@@ -12,9 +13,27 @@
     });
   });
 
-  async function addProductToCart(productId) {
-    const currentOrderId = getCurrentOrderId();
+  function disableProductOrderBtns(removeInnerText = false) {
+    if (!currentOrderHiddenInput) {
+      productOrderBtns.forEach((btn) => {
+        btn.disabled = true;
+        if (removeInnerText) {
+          btn.innerHTML = null;
 
+        }
+      });
+    }
+  }
+
+  function enableProductOrderBtns() {
+    productOrderBtns.forEach((btn) => {
+      btn.disabled = false;
+    });
+  }
+
+  async function addProductToCart(productId) {
+    disableProductOrderBtns();
+    const currentOrderId = getCurrentOrderId();
     const response = await fetch(
       `/orders/${currentOrderId}/update?product_id=${productId}`,
       {
@@ -29,12 +48,12 @@
     );
 
     if (response.ok) {
-      console.log("Product added to cart!");
       document.dispatchEvent(new Event("cartChanged"));
     } else {
       console.error("Oops! Something went wrong. Please try again.");
       console.table(response);
     }
+    sleep(5000).then(() => enableProductOrderBtns());
   }
 
   async function createOrder() {
@@ -44,14 +63,14 @@
 
     const data = await response.json();
     if (response.ok) {
-      document.getElementById("current-order-id").value = data.id;
+      currentOrderHiddenInput.value = data.id;
     } else {
       alert("Oops! Something went wrong. Please try again.");
     }
   }
 
   function getCurrentOrderId() {
-    let currentOrderId = document.getElementById("current-order-id").value;
+    let currentOrderId = currentOrderHiddenInput.value;
     if (!currentOrderId) {
       currentOrderId = createOrder()["id"];
     }
