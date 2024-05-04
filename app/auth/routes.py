@@ -37,8 +37,9 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
+
     form = RegistrationForm()
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         user = User(
             email=form.email.data,
             first_name=form.first_name.data,
@@ -54,4 +55,5 @@ def register():
         db.session.commit()
         flash("Registered successfully!")
         return redirect(url_for("auth.login"))
+
     return render_template("auth/register.html", title="Register", form=form)

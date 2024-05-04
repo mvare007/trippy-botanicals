@@ -173,7 +173,6 @@ def checkout():
 
 def allowed_file(file):
     filename = file.filename
-    breakpoint()
     return (
         "." in filename
         and filename.rsplit(".", 1)[1].lower()

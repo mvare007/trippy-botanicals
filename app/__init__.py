@@ -1,5 +1,3 @@
-from os import environ
-
 from flask import Flask
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -7,26 +5,13 @@ from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from config import load_config
 
 # Bootstrap - https://bootstrap-flask.readthedocs.io
 bootstrap = Bootstrap5()
 
-# Configuration
-environment = environ["FLASK_ENV"]
-if environment == "production":
-    from config import ProductionConfig
-
-    config = ProductionConfig()
-elif environment == "development":
-    from config import DevelopmentConfig
-
-    config = DevelopmentConfig()
-elif environment == "test":
-    from config import TestingConfig
-
-    config = TestingConfig()
-else:
-    raise ValueError("Invalid environment name")
+# Loads the configuration class for the environment specified in FLASK_ENVIRONMENT env variable
+config = load_config()
 
 # Flask SQL Alchemy - https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/
 db = SQLAlchemy()
@@ -39,7 +24,7 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Please log in to access this page."
 
-
+# Application Factory
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
