@@ -1,4 +1,5 @@
 from app.models import User
+import pytest
 # from factories import (
 #     UserFactory,
 #     ProductCategoryFactory,
@@ -6,8 +7,7 @@ from app.models import User
 #     OrderFactory,
 #     OrderItemFactory
 # )
-
-def test_new_user():
+def test_new_user(app, database):
 	"""
 		GIVEN a User model
     WHEN a new User is created
@@ -23,7 +23,10 @@ def test_new_user():
 		phone="123456789",
 		email="namek420@capsulecorp.com"
 	)
+	database.session.add(user)
+	database.session.commit()
 
+	assert user.id is not None
 	assert user.first_name == "Son"
 	assert user.last_name == "Goku"
 	assert user.address == "East District 439"
@@ -32,8 +35,7 @@ def test_new_user():
 	assert user.vat_number == "500123000"
 	assert user.phone == "123456789"
 	assert user.email == "namek420@capsulecorp.com"
-	assert user.admin == False
+	assert user.admin is False
 	assert user.date_joined is not None
 	assert user.created_at is not None
 	assert user.last_login is None
-	assert user.order is None

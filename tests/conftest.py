@@ -1,14 +1,11 @@
-from app import create_app, db
+from app import create_app
+from app.extensions import db
 from config import TestingConfig
 import pytest
 
-# pytest_plugins = ("pytest-cov", "pytest-azurepipelines")
-
 @pytest.fixture()
 def app():
-    app = setup()
-    yield app
-    teardown()
+    return create_app(test=True)
 
 
 @pytest.fixture()
@@ -20,26 +17,22 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
-def setup():
-    app = create_app()
-    testing_config = TestingConfig()
-    app.config.from_object(testing_config)
-    db.create_all()
+@pytest.fixture(autouse=True)
+def _setup_app_context_for_test(app):
+    """
+    Given app is session-wide, sets up a app context per test to ensure that
+    app and request stack is not shared between tests.
+    """
+    ctx = app.app_context()
+    ctx.push()
+    yield  # tests will run here
+    ctx.pop()
 
-    return app
-
-def teardown():
-    db.session.remove()
-    db.drop_all()
-
-# class AuthActions(object):
-#     def __init__(self, client: FlaskClient):
-#         self._client = client
-
-#     def login(self, username="test", password="test"):
-#         return self._client.post(
-#             "/auth/login", data={"username": username, "password": password}
-#         )
-
-#     def logout(self):
-#         return self._client.get("/auth/logout")
+@pytest.fixture()
+def database(app):
+    """Return a newly initialized database"""
+    with app.app_context():
+        db.create_all()
+        yield db
+        db.session.remove()
+        db.drop_all()
