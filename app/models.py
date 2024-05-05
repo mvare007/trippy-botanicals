@@ -1,14 +1,14 @@
 from datetime import datetime, timezone
 from typing import List, Optional
+from app.extensions import db, login_manager
 
-import sqlalchemy as sql
+import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from flask import json
 from flask_login import UserMixin
 from sqlalchemy.orm.attributes import QueryableAttribute
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import db, login_manager
 
 
 class BaseModel(db.Model):
@@ -129,24 +129,24 @@ class User(UserMixin, BaseModel):
     __table_name__ = "users"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    first_name: orm.Mapped[str] = orm.mapped_column(sql.String(255), index=True)
-    last_name: orm.Mapped[str] = orm.mapped_column(sql.String(255), index=True)
-    address: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(255))
-    zip_code: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(8))
-    location: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(255))
-    vat_number: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(9))
-    phone: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(16))
-    last_login: orm.Mapped[Optional[sql.DateTime]] = orm.mapped_column(sql.DateTime)
-    date_joined: orm.Mapped[sql.DateTime] = orm.mapped_column(
-        sql.DateTime, default=datetime.now(timezone.utc)
+    first_name: orm.Mapped[str] = orm.mapped_column(sa.String(255), index=True)
+    last_name: orm.Mapped[str] = orm.mapped_column(sa.String(255), index=True)
+    address: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(255))
+    zip_code: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(8))
+    location: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(255))
+    vat_number: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(9))
+    phone: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(16))
+    last_login: orm.Mapped[Optional[sa.DateTime]] = orm.mapped_column(sa.DateTime)
+    date_joined: orm.Mapped[sa.DateTime] = orm.mapped_column(
+        sa.DateTime, server_default=sa.func.now()
     )
-    email: orm.Mapped[str] = orm.mapped_column(sql.String(120), index=True, unique=True)
+    email: orm.Mapped[str] = orm.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: orm.WriteOnlyMapped[Optional[str]] = orm.mapped_column(
-        sql.String(255)
+        sa.String(255)
     )
-    admin: orm.Mapped[bool] = orm.mapped_column(sql.Boolean, default=False)
-    created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
-        sql.DateTime, default=datetime.now(timezone.utc)
+    admin: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.text('0'))
+    created_at: orm.Mapped[sa.DateTime] = orm.mapped_column(
+        sa.DateTime, server_default=sa.func.now()
     )
     orders: orm.Mapped[List["Order"]] = orm.relationship(
         back_populates="user", lazy="dynamic"
@@ -187,8 +187,8 @@ class ProductCategory(BaseModel):
     __table_name__ = "product_categories"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    name: orm.Mapped[str] = orm.mapped_column(sql.String(255), index=True, unique=True)
-    description: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(255))
+    name: orm.Mapped[str] = orm.mapped_column(sa.String(255), index=True, unique=True)
+    description: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(255))
     products: orm.Mapped["Product"] = orm.relationship(back_populates="category")
 
     def __repr__(self):
@@ -202,12 +202,12 @@ class Product(BaseModel):
     __table_name__ = "products"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    name: orm.Mapped[str] = orm.mapped_column(sql.String(255), index=True)
-    description: orm.Mapped[Optional[str]] = orm.mapped_column(sql.String(255))
-    price: orm.Mapped[float] = orm.mapped_column(sql.Float)
-    stock: orm.Mapped[int] = orm.mapped_column(sql.Integer, default=10)
+    name: orm.Mapped[str] = orm.mapped_column(sa.String(255), index=True)
+    description: orm.Mapped[Optional[str]] = orm.mapped_column(sa.String(255))
+    price: orm.Mapped[float] = orm.mapped_column(sa.Float)
+    stock: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=10)
     category_id: orm.Mapped[int] = orm.mapped_column(
-        sql.ForeignKey(ProductCategory.id), index=True
+        sa.ForeignKey(ProductCategory.id), index=True
     )
     category: orm.Mapped["ProductCategory"] = orm.relationship(
         back_populates="products"
@@ -232,10 +232,10 @@ class Order(BaseModel):
     __table_name__ = "orders"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    user_id: orm.Mapped[int] = orm.mapped_column(sql.ForeignKey(User.id), index=True)
-    status: orm.Mapped[str] = orm.mapped_column(sql.String(20), default="Pending")
-    created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
-        sql.DateTime, default=datetime.now(timezone.utc)
+    user_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(User.id), index=True)
+    status: orm.Mapped[str] = orm.mapped_column(sa.String(20), default="Pending")
+    created_at: orm.Mapped[sa.DateTime] = orm.mapped_column(
+        sa.DateTime, server_default=sa.func.now()
     )
     user: orm.Mapped["User"] = orm.relationship(back_populates="orders")
     items: orm.Mapped[List["OrderItem"]] = orm.relationship(
@@ -258,15 +258,15 @@ class OrderItem(BaseModel):
     __table_name__ = "order_items"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    quantity: orm.Mapped[int] = orm.mapped_column(sql.Integer)
+    quantity: orm.Mapped[int] = orm.mapped_column(sa.Integer)
     product_id: orm.Mapped[int] = orm.mapped_column(
-        sql.ForeignKey(Product.id), index=True
+        sa.ForeignKey(Product.id), index=True
     )
-    order_id: orm.Mapped[int] = orm.mapped_column(sql.ForeignKey(Order.id), index=True)
+    order_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(Order.id), index=True)
     product: orm.Mapped["Product"] = orm.relationship(back_populates="order_items")
     order: orm.Mapped["Order"] = orm.relationship(back_populates="items")
-    created_at: orm.Mapped[sql.DateTime] = orm.mapped_column(
-        sql.DateTime,
+    created_at: orm.Mapped[sa.DateTime] = orm.mapped_column(
+        sa.DateTime,
         default=lambda: datetime.now(timezone.utc),
     )
 

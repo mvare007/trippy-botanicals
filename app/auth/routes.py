@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, request
 from app.auth import bp
 import sqlalchemy as sql
-from app import db
+from app.extensions import db
 from urllib.parse import urlsplit
 from app.models import User
 from app.auth.forms import LoginForm, RegistrationForm

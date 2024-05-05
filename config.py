@@ -54,7 +54,10 @@ class TestingConfig(Config):
     DATABASE_PASSWORD = "root"
 
 
-def load_config():
+def load_config(test=False):
+    if test:
+        return TestingConfig
+
     environment = os.environ.get("FLASK_ENV")
     config_mapping = {
         "production": ProductionConfig,

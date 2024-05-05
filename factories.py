@@ -1,7 +1,7 @@
 from factory import alchemy, Sequence, SubFactory, Faker
 from app.models import User, ProductCategory, Product, Order, OrderItem
 from random import randint
-from app import db
+from app.extensions import db
 
 class UserFactory(alchemy.SQLAlchemyModelFactory):
     class Meta:
