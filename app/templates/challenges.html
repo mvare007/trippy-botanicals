@@ -5,7 +5,7 @@ content %}
 
   <div class="row align-items-center">
     <div class="col-md-6">
-      <img id="plant-photo" src="{{url_for('static', filename='images/banner.jpeg')}}" alt="Banner Image" class="img-fluid rounded  mb-4">
+      <img id="plant-photo" src="{{url_for('static', filename='images/banner.jpeg')}}" alt="Banner Image" class="img-fluid rounded mb-4">
     </div>
     <div class="col-md-6">
       <div class="card border-0 shadow">
@@ -21,7 +21,12 @@ content %}
           <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }}
             <div class="mb-3">
-              <label for="photo" class="form-label">Upload Photo:</label>
+              <button type="button" class="bg-info text-light" data-bs-toggle="tooltip" data-bs-placement="right" title="Maximum size: 10Mb. Supported formats: png, jpg, gif.">
+                ?
+              </button>
+              <label for="photo" class="form-label">
+                Upload Photo:
+              </label>
               <input type="file" class="form-control" id="photo" name="photo" required>
               {% for error in form.photo.errors %}
                 <div class="text-danger">{{ error }}</div>
@@ -92,6 +97,7 @@ content %}
       } else {
         alert('Sorry, try again!');
       }
+      challengeInput.value = '';
       fetchUnsplashPhoto();
     }
 

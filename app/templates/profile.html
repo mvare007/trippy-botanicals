@@ -8,7 +8,7 @@
 </p>
 <hr />
 
-<table class="table table-dark">
+<table class="table table-dark table-responsive">
   <thead>
     <tr>
       <th scope="col">Order Number</th>
@@ -45,5 +45,17 @@
     {% endif %}
   </tbody>
 </table>
+
+<h3 class="mt-5">Your Photos</h3>
+<hr>
+
+{% for photo in photos %}
+  <div class="card my-3" style="width: 18rem;">
+    <img src="{{ photo.url }}" class="card-img-top" alt="...">
+    <div class="card-body">
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    </div>
+  </div>
+{% endfor %}
 
 {% endblock %}
