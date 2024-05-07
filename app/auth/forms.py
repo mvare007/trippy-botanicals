@@ -10,7 +10,7 @@ from wtforms.validators import (
 )
 import sqlalchemy as sql
 from app.extensions import db
-from app.models import User
+from app.models.user import User
 
 
 class Validations:

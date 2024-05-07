@@ -4,7 +4,11 @@ from app.main import bp as main_bp
 from app.auth import bp as auth_bp
 from app.cli import bp as cli_bp
 from app.extensions import db, migrate, login_manager, bootstrap, register_flask_admin
-from app.models import User, Product, ProductCategory, Order, OrderItem
+from app.models.user import User
+from app.models.product_category import ProductCategory
+from app.models.product import Product
+from app.models.order import Order
+from app.models.order_item import OrderItem
 
 def create_app(test=False):
     app = Flask(__name__)

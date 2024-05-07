@@ -3,7 +3,7 @@ from app.auth import bp
 import sqlalchemy as sql
 from app.extensions import db
 from urllib.parse import urlsplit
-from app.models import User
+from app.models.user import User
 from app.auth.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 
