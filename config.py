@@ -52,6 +52,7 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     DATABASE_USER = "root"
     DATABASE_PASSWORD = "root"
+    WTF_CSRF_ENABLED = False
 
 
 def load_config(test=False):
