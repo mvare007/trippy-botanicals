@@ -1,5 +1,5 @@
 
-# Bud Buddies
+# Trippy Botanicals
 
 Final project for Rumos Academia Devops.
 
