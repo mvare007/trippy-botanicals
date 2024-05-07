@@ -1,5 +1,5 @@
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
+from app.admin.custom_views import AdminModelView, DashboardView
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -21,6 +21,6 @@ login_manager.login_message = "Please log in to access this page."
 
 # Flask Admin - https://flask-admin.readthedocs.io/en/latest/
 def register_flask_admin(app, db, models):
-		admin = Admin(app, name="Trippy Botanicals", template_mode="bootstrap3")
+		admin = Admin(app, name="Trippy Botanicals", template_mode="bootstrap4", index_view=DashboardView())
 		for model in models:
-				admin.add_view(ModelView(model, db.session))
+				admin.add_view(AdminModelView(model, db.session))
