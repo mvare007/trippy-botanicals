@@ -1,71 +1,37 @@
-from os import environ
-
 from flask import Flask
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-from flask_bootstrap import Bootstrap5
-from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
+from config import load_config
+from app.main import bp as main_bp
+from app.auth import bp as auth_bp
+from app.cli import bp as cli_bp
+from app.extensions import db, migrate, login_manager, bootstrap, register_flask_admin
+from app.models.user import User
+from app.models.product_category import ProductCategory
+from app.models.product import Product
+from app.models.order import Order
+from app.models.order_item import OrderItem
 
-# Bootstrap - https://bootstrap-flask.readthedocs.io
-bootstrap = Bootstrap5()
-
-# Configuration
-environment = environ["FLASK_ENV"]
-if environment == "production":
-    from config import ProductionConfig
-
-    config = ProductionConfig()
-elif environment == "development":
-    from config import DevelopmentConfig
-
-    config = DevelopmentConfig()
-elif environment == "test":
-    from config import TestingConfig
-
-    config = TestingConfig()
-else:
-    raise ValueError("Invalid environment name")
-
-# Flask SQL Alchemy - https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/
-db = SQLAlchemy()
-
-# Flask Migrate - https://flask-migrate.readthedocs.io/en/latest/
-migrate = Migrate()
-
-# Flask Login - https://flask-login.readthedocs.io/en/latest/
-login_manager = LoginManager()
-login_manager.login_view = "auth.login"
-login_manager.login_message = "Please log in to access this page."
-
-
-def create_app():
+def create_app(test=False):
     app = Flask(__name__)
+    config = load_config(test)
     app.config.from_object(config)
+
+    with app.app_context():
+        register_extensions(app)
+        register_blueprints(app)
+
+    return app
+
+def register_extensions(app):
+    """Register Flask extensions."""
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bootstrap.init_app(app)
+    register_flask_admin(app, db, [User, Product, ProductCategory, Order, OrderItem])
 
-    from app import models
 
-    admin = Admin(app, name="Trippy Botanicals", template_mode="bootstrap3")
-    admin.add_view(ModelView(models.User, db.session))
-    admin.add_view(ModelView(models.ProductCategory, db.session))
-    admin.add_view(ModelView(models.Product, db.session))
-    admin.add_view(ModelView(models.Order, db.session))
-
-    from app.main import bp as main_bp
-
+def register_blueprints(app):
+    """Register Flask blueprints."""
     app.register_blueprint(main_bp)
-
-    from app.auth import bp as auth_bp
-
     app.register_blueprint(auth_bp)
-
-    from app.cli import bp as cli_bp
-
     app.register_blueprint(cli_bp)
-
-    return app

@@ -12,10 +12,13 @@ from flask import (
 )
 from flask_login import current_user, login_required
 
-from app import db
+from app.extensions import db
 from app.main import bp
 from app.main.forms import ChallengeForm, CheckoutForm
-from app.models import Order, OrderItem, Product, ProductCategory
+from app.models.order import Order
+from app.models.order_item import OrderItem
+from app.models.product import Product
+from app.models.product_category import ProductCategory
 from app.utils.azure_storage_blob import AzureStorageBlob
 from app.utils.file_validations import allowed_file
 
