@@ -14,10 +14,13 @@ from flask import (
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
-from app import db
+from app.extensions import db
 from app.main import bp
 from app.main.forms import ChallengeForm, CheckoutForm
-from app.models import Order, OrderItem, Product, ProductCategory
+from app.models.product_category import ProductCategory
+from app.models.product import Product
+from app.models.order import Order
+from app.models.order_item import OrderItem
 
 
 @bp.route("/")
@@ -173,7 +176,6 @@ def checkout():
 
 def allowed_file(file):
     filename = file.filename
-    breakpoint()
     return (
         "." in filename
         and filename.rsplit(".", 1)[1].lower()

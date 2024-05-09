@@ -1,6 +1,8 @@
 import os
+from dotenv import load_dotenv
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(base_dir, ".flask_env"))
 
 
 class Config:
@@ -32,7 +34,7 @@ class DevelopmentConfig(Config):
     )
     DATABASE_USER = "root"
     DATABASE_PASSWORD = "root"
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = True # log all the statements issued to stderr.
 
     # Create Development Database if it doesn't exist
     if not os.path.exists(os.path.join(base_dir, "tmp")):
@@ -50,3 +52,22 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     DATABASE_USER = "root"
     DATABASE_PASSWORD = "root"
+    WTF_CSRF_ENABLED = False
+
+
+def load_config(test=False):
+    if test:
+        return TestingConfig
+
+    environment = os.environ.get("FLASK_ENV")
+    config_mapping = {
+        "production": ProductionConfig,
+        "development": DevelopmentConfig,
+    }
+
+    try:
+        configuration = config_mapping[environment]()
+    except KeyError:
+        raise ValueError(f"Invalid environment name: {environment}")
+
+    return configuration

@@ -128,3 +128,8 @@
   align-items: center;
   margin-top: 8px;
 }
+
+.flashes {
+  position: absolute;
+  width: 100%;
+}

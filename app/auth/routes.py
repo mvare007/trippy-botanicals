@@ -1,9 +1,9 @@
 from flask import render_template, redirect, url_for, flash, request
 from app.auth import bp
 import sqlalchemy as sql
-from app import db
+from app.extensions import db
 from urllib.parse import urlsplit
-from app.models import User
+from app.models.user import User
 from app.auth.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -37,8 +37,9 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
+
     form = RegistrationForm()
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         user = User(
             email=form.email.data,
             first_name=form.first_name.data,
@@ -54,4 +55,5 @@ def register():
         db.session.commit()
         flash("Registered successfully!")
         return redirect(url_for("auth.login"))
+
     return render_template("auth/register.html", title="Register", form=form)
