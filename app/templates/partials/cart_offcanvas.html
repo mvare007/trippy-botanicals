@@ -1,0 +1,38 @@
+<div
+	class="offcanvas offcanvas-end"
+	tabindex="-1"
+	id="offcanvasRight"
+	aria-labelledby="offcanvasRightLabel"
+	>
+	<div class="offcanvas-header">
+		<h5 id="offcanvasRightLabel">Cart</h5>
+		<button
+			type="button"
+			class="btn-close text-reset"
+			data-bs-dismiss="offcanvas"
+			aria-label="Close"
+		></button>
+	</div>
+	<div class="offcanvas-body">
+		<table class="table table-primary table-striped table-sm">
+			<thead>
+				<tr>
+					<th scope="col">Product</th>
+					<th scope="col">Unit Price</th>
+					<th scope="col">Quantity</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody id="cart-table-body"></tbody>
+			<tfoot>
+				<tr>
+					<td colspan="1"><strong>Total</strong></td>
+					<td id="cart-total" colspan="3">0</td>
+				</tr>
+			</tfoot>
+		</table>
+		<a class="btn btn-primary" href="{{ url_for('main.checkout') }}"
+			>Checkout</a
+		>
+	</div>
+</div>
