@@ -3,6 +3,7 @@ venv
 __pycache__/
 tmp
 .vscode
-*.log
 *.sqlite
 test-output.xml
+log/*
+!log/.gitkeep
