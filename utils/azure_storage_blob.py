@@ -9,9 +9,9 @@ from werkzeug.utils import secure_filename
 class AzureStorageBlob:
     def __init__(self):
         self.__init_logger()
-        self.container_name = environ["AZURE_STORAGE_CONTAINER_NAME"]
+        self.container_name = environ.get("AZURE_STORAGE_CONTAINER_NAME")
         self.blob_service_client = BlobServiceClient.from_connection_string(
-            environ["AZURE_STORAGE_CONNECTION_STRING"], logging_enable=True
+            environ.get("AZURE_STORAGE_CONNECTION_STRING"), logging_enable=True
         )
 
         try:
