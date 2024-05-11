@@ -18,6 +18,7 @@ def make_shell_context():
         "sa": sa,
         "orm": orm,
         "db": db,
+        "session": db.session,
         "User": User,
         "ProductCategory": ProductCategory,
         "Product": Product,

@@ -132,7 +132,6 @@
 .flashes {
   position: absolute;
   width: 100%;
-  animation: psychedelic 5s ease infinite;
 }
 
 hr {
