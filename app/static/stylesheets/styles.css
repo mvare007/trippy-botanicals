@@ -132,4 +132,11 @@
 .flashes {
   position: absolute;
   width: 100%;
+  animation: psychedelic 5s ease infinite;
+}
+
+hr {
+  border: none;
+  height: 5px;
+  background-color: #111212;
 }
