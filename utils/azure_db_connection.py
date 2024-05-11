@@ -22,7 +22,7 @@ class AzureDbConnection:
     Azure SQL database connection.
     """
 
-    def __init__(self, conn_settings: ConnectionSettings, echo: bool = False) -> None:
+    def __init__(self, conn_settings: ConnectionSettings, echo: bool = True) -> None:
         conn_params = urllib.parse.quote_plus(
             "Driver=%s;" % conn_settings.driver
             + "Server=tcp:%s.database.windows.net,1433;" % conn_settings.server
@@ -33,9 +33,8 @@ class AzureDbConnection:
             + "TrustServerCertificate=no;"
             + "Connection Timeout=%s;" % conn_settings.timeout
         )
-        conn_string = f"mssql+pyodbc:///?odbc_connect={conn_params}"
-
-        self.db = create_engine(conn_string, echo=echo)
+        self.conn_string = f"mssql+pyodbc:///?odbc_connect={conn_params}"
+        self.db = create_engine(self.conn_string, echo=echo)
 
     def connect(self) -> None:
         """Estimate connection."""

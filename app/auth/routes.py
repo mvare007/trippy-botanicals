@@ -16,7 +16,7 @@ def login():
     if form.validate_on_submit():
         user = db.session.scalar(sql.select(User).where(User.email == form.email.data))
         if user is None or not user.check_password(form.password.data):
-            flash("Invalid email or password")
+            flash("Invalid email or password", "danger")
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
         user.set_last_login()
@@ -39,7 +39,7 @@ def register():
         return redirect(url_for("main.index"))
 
     form = RegistrationForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == "POST" and form.validate_on_submit():
         user = User(
             email=form.email.data,
             first_name=form.first_name.data,
@@ -53,7 +53,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash("Registered successfully!")
+        flash("Registered successfully!", "success")
         return redirect(url_for("auth.login"))
 
     return render_template("auth/register.html", title="Register", form=form)

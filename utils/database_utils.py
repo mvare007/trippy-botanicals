@@ -13,11 +13,7 @@ def setup_database_connection(app):
         setup_azure_database_connection(app)
     elif environment == "development":
         create_development_database()
-        db.init_app(app)
-    elif environment == "test":
-        db.init_app(app)
-    else:
-        raise ValueError(f"Invalid environment name: {environment}")
+    db.init_app(app)
 
 
 def create_development_database():
@@ -25,11 +21,6 @@ def create_development_database():
     Creates a development SQLite database in the tmp folder if it doesn't exist.
     Poor man's solution to avoid paying for an Azure SQL database for development :-)
     """
-
-    if environment != "development":
-        raise ValueError(
-            "This function should only be used in development environment."
-        )
 
     db_name = f"{DevelopmentConfig.DATABASE_NAME}.db"
     if not path.exists(path.join(base_dir, "tmp")):
@@ -47,4 +38,5 @@ def setup_azure_database_connection(app):
         password=environ.get("AZURE_DB_PASSWORD"),
     )
     db_conn = AzureDbConnection(conn_settings)
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_conn.conn_string
     db_conn.connect()

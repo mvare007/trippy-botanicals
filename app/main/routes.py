@@ -166,7 +166,7 @@ def checkout():
         order = current_user.current_order()
         order.status = "Processed"
         db.session.commit()
-        flash("Order processed successfully!")
+        flash("Order processed successfully!", "success")
         return redirect(url_for("main.index"))
     return render_template("checkout.html", title="Checkout", form=form)
 
@@ -178,11 +178,11 @@ def challenges():
     if request.method == "POST" and form.validate_on_submit():
         file = form.photo.data
         if not allowed_file(file):
-            flash("Invalid file type or file too large")
+            flash("Invalid file type or file too large", "danger")
             return redirect(request.url)
         else:
             storage = AzureStorageBlob()
-            storage.upload_blob(file)
-            flash("Photo uploaded successfully!")
+            url = storage.upload_blob(file)
+            flash("Photo uploaded successfully!", "success")
         return redirect(url_for("main.challenges"))
     return render_template("challenges.html", form=form)
