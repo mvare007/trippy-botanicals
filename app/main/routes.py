@@ -1,15 +1,7 @@
 import os
 
 import sqlalchemy as sql
-from flask import (
-    current_app,
-    flash,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
+from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.extensions import db
@@ -19,8 +11,8 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.models.product_category import ProductCategory
-from app.utils.azure_storage_blob import AzureStorageBlob
-from app.utils.file_validations import allowed_file
+from utils.azure_storage_blob import AzureStorageBlob
+from utils.file_validations import allowed_file
 
 
 @bp.route("/")
