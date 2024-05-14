@@ -11,6 +11,7 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.models.product_category import ProductCategory
+from app.models.document import Document
 from utils.azure_storage_blob import AzureStorageBlob
 from utils.file_validations import allowed_file
 
@@ -32,11 +33,7 @@ def index():
 @bp.route("/profile")
 @login_required
 def profile():
-    storage = AzureStorageBlob()
-    photos = [
-        storage.container_client.get_blob_client(blob=blob.name)
-        for blob in storage.list_blobs()
-    ]
+    photos = current_user.documents()
     return render_template("profile.html", photos=photos)
 
 
@@ -183,6 +180,9 @@ def challenges():
         else:
             storage = AzureStorageBlob()
             url = storage.upload_blob(file)
+            photo = Document(url=url, owner_id=current_user.id, owner_type="User")
+            db.session.add(photo)
+            db.session.commit()
             flash("Photo uploaded successfully!", "success")
         return redirect(url_for("main.challenges"))
     return render_template("challenges.html", form=form)

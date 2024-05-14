@@ -2,6 +2,7 @@ from app import create_app
 from app.extensions import db
 import pytest
 
+
 @pytest.fixture()
 def app():
     return create_app(test=True)
@@ -16,6 +17,7 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
+
 @pytest.fixture(autouse=True)
 def _setup_app_context_for_test(app):
     """
@@ -26,6 +28,7 @@ def _setup_app_context_for_test(app):
     ctx.push()
     yield  # tests will run here
     ctx.pop()
+
 
 @pytest.fixture()
 def database(app):

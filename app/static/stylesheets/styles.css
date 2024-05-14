@@ -130,8 +130,10 @@
 }
 
 .flashes {
-  position: absolute;
-  width: 100%;
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 1000;
 }
 
 hr {

@@ -3,6 +3,7 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms import BooleanField, StringField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, Length, Optional
 
+
 class CheckoutForm(FlaskForm):
     card_number = StringField("Card Number", validators=[DataRequired()])
     cvv = StringField("CVV", validators=[DataRequired()])

@@ -32,6 +32,7 @@ def create_development_database():
 
 def setup_azure_database_connection(app):
     conn_settings = ConnectionSettings(
+        driver=environ.get("AZURE_DB_DRIVER"),
         server=environ.get("AZURE_DB_SERVER"),
         database=environ.get("AZURE_DB_NAME"),
         username=environ.get("AZURE_DB_USERNAME"),

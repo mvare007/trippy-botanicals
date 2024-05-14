@@ -18,5 +18,5 @@ function dismissAlert() {
 }
 
 function dismissAlertAfterTimeout() {
-	setTimeout(dismissAlert, 3000);
+	setTimeout(dismissAlert, 5000);
 }
