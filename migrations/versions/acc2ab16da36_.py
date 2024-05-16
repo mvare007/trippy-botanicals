@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: fdb5a87eff48
-Revises: 4f97e0ed9408
-Create Date: 2024-05-14 19:03:01.583469
+Revision ID: acc2ab16da36
+Revises: 
+Create Date: 2024-05-14 20:47:12.307756
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fdb5a87eff48'
-down_revision = '4f97e0ed9408'
+revision = 'acc2ab16da36'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -49,11 +49,11 @@ def upgrade():
     sa.Column('vat_number', sa.String(length=9), nullable=True),
     sa.Column('phone', sa.String(length=16), nullable=True),
     sa.Column('last_login', sa.DateTime(), nullable=True),
-    sa.Column('date_joined', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('date_joined', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=True),
     sa.Column('admin', sa.Boolean(), server_default=sa.text('0'), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('user', schema=None) as batch_op:
@@ -65,7 +65,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
