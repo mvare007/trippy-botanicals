@@ -38,6 +38,7 @@ class DevelopmentConfig(BaseConfig):
     DATABASE_USER = "root"
     DATABASE_PASSWORD = "root"
     SQLALCHEMY_ECHO = True  # log all the statements issued to stderr.
+    SQLALCHEMY_RECORD_QUERIES = True  # records executed queries for flask-debugtoolbar
 
 
 class TestingConfig(BaseConfig):
