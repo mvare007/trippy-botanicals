@@ -8,3 +8,4 @@ test-output.xml
 .pytest_cache
 log/*
 !log/.gitkeep
+.coverage
