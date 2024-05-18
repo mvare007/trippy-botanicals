@@ -9,6 +9,8 @@ def init_logger(app):
     log_dir = path.join(base_dir, "log")
     log_level = app.config["LOG_LEVEL"]
     app.logger.setLevel(log_level)
+    if app.config["ENVIRONMENT"] == "test":
+        return
 
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(log_level)
@@ -25,4 +27,4 @@ def init_logger(app):
     file_handler.setFormatter(file_formatter)
     file_handler.setLevel(log_level)
     app.logger.addHandler(file_handler)
-    app.logger.info("Trippy starting up...")
+    app.logger.info("App starting up...")
