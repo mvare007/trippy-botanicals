@@ -14,11 +14,11 @@ def test_login_post(client, database):
     database.session.add(user)
     database.session.commit()
 
-    response = client.post("/login", data=dict(email=user.email, password="password"))
-    redirect_location = response.headers.get("Location")
+    data = dict(email=user.email, password="password")
+    response = client.post("/login", data=data, follow_redirects=True)
 
-    assert response.status_code == 302
-    assert redirect_location == "/index"
+    assert response.status_code == 200
+    assert response.request.path == "/index"
 
 
 def test_failed_login_post(client, database):
