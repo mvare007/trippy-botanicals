@@ -1,5 +1,3 @@
-import os
-
 import sqlalchemy as sql
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
