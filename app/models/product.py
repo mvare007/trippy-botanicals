@@ -3,6 +3,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 from typing import Optional
 from app.models.base_model import BaseModel
 
+
 class Product(BaseModel):
     __table_name__ = "products"
 
@@ -14,9 +15,7 @@ class Product(BaseModel):
     category_id: Mapped[int] = mapped_column(
         ForeignKey("product_category.id"), index=True
     )
-    category: Mapped["ProductCategory"] = relationship(
-        back_populates="products"
-    )
+    category: Mapped["ProductCategory"] = relationship(back_populates="products")
     order_items: Mapped["OrderItem"] = relationship(back_populates="product")
 
     def __repr__(self):

@@ -1,15 +1,5 @@
-import os
-
 import sqlalchemy as sql
-from flask import (
-    current_app,
-    flash,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
+from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.extensions import db
@@ -19,8 +9,9 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.models.product_category import ProductCategory
-from app.utils.azure_storage_blob import AzureStorageBlob
-from app.utils.file_validations import allowed_file
+from app.models.document import Document
+from utils.azure_storage_blob import AzureStorageBlob
+from utils.file_validations import allowed_file
 
 
 @bp.route("/")
@@ -40,11 +31,7 @@ def index():
 @bp.route("/profile")
 @login_required
 def profile():
-    storage = AzureStorageBlob()
-    photos = [
-        storage.container_client.get_blob_client(blob=blob.name)
-        for blob in storage.list_blobs()
-    ]
+    photos = current_user.documents()
     return render_template("profile.html", photos=photos)
 
 
@@ -174,7 +161,7 @@ def checkout():
         order = current_user.current_order()
         order.status = "Processed"
         db.session.commit()
-        flash("Order processed successfully!")
+        flash("Order processed successfully!", "success")
         return redirect(url_for("main.index"))
     return render_template("checkout.html", title="Checkout", form=form)
 
@@ -186,11 +173,14 @@ def challenges():
     if request.method == "POST" and form.validate_on_submit():
         file = form.photo.data
         if not allowed_file(file):
-            flash("Invalid file type or file too large")
+            flash("Invalid file type or file too large", "danger")
             return redirect(request.url)
         else:
             storage = AzureStorageBlob()
-            storage.upload_blob(file)
-            flash("Photo uploaded successfully!")
+            url = storage.upload_blob(file)
+            photo = Document(url=url, owner_id=current_user.id, owner_type="User")
+            db.session.add(photo)
+            db.session.commit()
+            flash("Photo uploaded successfully!", "success")
         return redirect(url_for("main.challenges"))
     return render_template("challenges.html", form=form)

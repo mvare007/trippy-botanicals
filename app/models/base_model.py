@@ -2,6 +2,7 @@ from app.extensions import db
 from sqlalchemy.orm.attributes import QueryableAttribute
 from flask import json
 
+
 class BaseModel(db.Model):
     __abstract__ = True
 

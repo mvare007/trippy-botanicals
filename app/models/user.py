@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from typing import List, Optional
 from app.models.base_model import BaseModel
 from app.models.order import Order
+from app.models.document import Document
+
 
 class User(UserMixin, BaseModel):
     __table_name__ = "users"
@@ -27,12 +29,16 @@ class User(UserMixin, BaseModel):
     password_hash: orm.WriteOnlyMapped[Optional[str]] = orm.mapped_column(
         sa.String(255)
     )
-    admin: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.text('0'))
+    admin: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.text("0"))
     created_at: orm.Mapped[sa.DateTime] = orm.mapped_column(
         sa.DateTime, server_default=sa.func.now()
     )
     orders: orm.Mapped[List["Order"]] = orm.relationship(
         back_populates="user", lazy="dynamic"
+    )
+
+    documents: orm.Mapped[List["Document"]] = orm.relationship(
+        back_populates="owner", lazy="dynamic"
     )
 
     def __repr__(self):
@@ -66,3 +72,6 @@ class User(UserMixin, BaseModel):
     @login_manager.user_loader
     def load_user(id):
         return db.session.get(User, int(id))
+
+    def documents(self):
+        return Document.query.filter_by(owner_id=self.id, owner_type="User").all()

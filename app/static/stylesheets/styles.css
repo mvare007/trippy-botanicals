@@ -130,6 +130,14 @@
 }
 
 .flashes {
-  position: absolute;
-  width: 100%;
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 1000;
+}
+
+hr {
+  border: none;
+  height: 5px;
+  background-color: #111212;
 }

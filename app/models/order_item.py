@@ -13,7 +13,7 @@ class OrderItem(BaseModel):
     product_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("product.id"), index=True
     )
-    order_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey('order.id'), index=True)
+    order_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("order.id"), index=True)
     product: orm.Mapped["Product"] = orm.relationship(back_populates="order_items")
     order: orm.Mapped["Order"] = orm.relationship(back_populates="items")
     created_at: orm.Mapped[sa.DateTime] = orm.mapped_column(

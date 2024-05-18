@@ -4,11 +4,12 @@ from factories import (
     ProductCategoryFactory,
     ProductFactory,
     OrderFactory,
-    OrderItemFactory
+    OrderItemFactory,
 )
 from random import randint
 
-bp = Blueprint('cli', __name__, cli_group=None)
+bp = Blueprint("cli", __name__, cli_group=None)
+
 
 @bp.cli.group()
 def demo():
@@ -30,7 +31,6 @@ def seed():
 
     # Create Admin user
     admin_user = UserFactory.create(email="admin@demo.com", admin=True)
-    admin_user.set_password('admin')
+    admin_user.set_password("admin")
     print("Admin user created:\nEmail: admin@demo.com\nPassword: admin")
     pass
-

@@ -2,10 +2,9 @@ venv
 .venv
 __pycache__/
 tmp
-.vscode
-*.sqlite
-test-output.xml
 .pytest_cache
+.vscode
+test-output.xml
 log/*
 !log/.gitkeep
-.coverage
+.flaskenv

@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_debugtoolbar import DebugToolbarExtension
 
 # Bootstrap - https://bootstrap-flask.readthedocs.io
 bootstrap = Bootstrap5()
@@ -19,8 +20,17 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Please log in to access this page."
 
+# Flask Debug Toolbar - https://flask-debugtoolbar.readthedocs.io/en/latest/
+toolbar = DebugToolbarExtension()
+
+
 # Flask Admin - https://flask-admin.readthedocs.io/en/latest/
 def register_flask_admin(app, db, models):
-		admin = Admin(app, name="Trippy Botanicals", template_mode="bootstrap4", index_view=DashboardView())
-		for model in models:
-				admin.add_view(AdminModelView(model, db.session))
+    admin = Admin(
+        app,
+        name="Trippy Botanicals",
+        template_mode="bootstrap4",
+        index_view=DashboardView(),
+    )
+    for model in models:
+        admin.add_view(AdminModelView(model, db.session))
