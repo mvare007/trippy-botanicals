@@ -16,7 +16,7 @@ from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.models.product_category import ProductCategory
 from app.models.user import User
-from config import load_config
+from config import environment, load_config
 from utils.database_utils import setup_database_connection
 from utils.logger import init_logger
 
@@ -40,8 +40,9 @@ def register_extensions(app):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bootstrap.init_app(app)
-    toolbar.init_app(app)
     register_flask_admin(app, db, [User, Product, ProductCategory, Order, OrderItem])
+    if environment == "development" and app.config["DEBUG"]:
+        toolbar.init_app(app)
 
 
 def register_blueprints(app):
