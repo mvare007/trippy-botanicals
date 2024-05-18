@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
+environment = os.environ.get("FLASK_ENV")
 base_dir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(base_dir, ".flaskenv"))
 
@@ -54,7 +55,6 @@ def load_config(test=False):
     if test:
         return TestingConfig
 
-    environment = os.environ.get("FLASK_ENV")
     config_mapping = {
         "production": ProductionConfig,
         "development": DevelopmentConfig,

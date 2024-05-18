@@ -3,9 +3,7 @@ from os import environ, makedirs, path
 from utils.azure_db_connection import AzureDbConnection, ConnectionSettings
 
 from app.extensions import db
-from config import DevelopmentConfig, base_dir
-
-environment = environ.get("FLASK_ENV")
+from config import environment, DevelopmentConfig, base_dir
 
 
 def setup_database_connection(app):
