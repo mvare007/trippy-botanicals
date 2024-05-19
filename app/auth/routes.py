@@ -40,19 +40,25 @@ def register():
 
     form = RegistrationForm()
     if request.method == "POST" and form.validate_on_submit():
-        user = User(
-            email=form.email.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            address=form.address.data,
-            zip_code=form.zip_code.data,
-            location=form.location.data,
-            vat_number=form.vat_number.data,
-            phone=form.phone.data,
-        )
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        try:
+            user = User(
+                email=form.email.data,
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                address=form.address.data,
+                zip_code=form.zip_code.data,
+                location=form.location.data,
+                vat_number=form.vat_number.data,
+                phone=form.phone.data,
+            )
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+        except AssertionError as e:
+            db.session.rollback()
+            flash(f"Error: {e}", "danger")
+            return render_template("auth/register.html", title="Register", form=form)
+
         flash("Registered successfully!", "success")
         return redirect(url_for("auth.login"))
 
