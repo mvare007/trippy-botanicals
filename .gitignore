@@ -9,3 +9,4 @@ test-output.xml
 log/*
 !log/.gitkeep
 .coverage
+app/static/uploads/*

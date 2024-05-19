@@ -10,7 +10,6 @@ from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.models.product_category import ProductCategory
 from app.models.document import Document
-from utils.azure_storage_blob import AzureStorageBlob
 from utils.file_validations import allowed_file
 
 
@@ -176,11 +175,17 @@ def challenges():
             flash("Invalid file type or file too large", "danger")
             return redirect(request.url)
         else:
-            storage = AzureStorageBlob()
-            url = storage.upload_blob(file)
-            photo = Document(url=url, owner_id=current_user.id, owner_type="User")
-            db.session.add(photo)
-            db.session.commit()
+            url = Document.upload(file)
+
+            try:
+                photo = Document(url=url, owner_id=current_user.id, owner_type="User")
+                db.session.add(photo)
+                db.session.commit()
+            except Exception as e:
+                flash(f"An error occurred: {str(e)}", "danger")
+                Document.delete(url)
+                return render_template("challenges.html", form=form)
+
             flash("Photo uploaded successfully!", "success")
         return redirect(url_for("main.challenges"))
     return render_template("challenges.html", form=form)
