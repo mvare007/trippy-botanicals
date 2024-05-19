@@ -3,11 +3,13 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
+from sqlalchemy.orm import validates
 from datetime import datetime, timezone
 from typing import List, Optional
 from app.models.base_model import BaseModel
 from app.models.order import Order
 from app.models.document import Document
+import re
 
 
 class User(UserMixin, BaseModel):
@@ -59,6 +61,12 @@ class User(UserMixin, BaseModel):
         raise AttributeError("password is not a readable attribute")
 
     def set_password(self, password):
+        if not password:
+            raise AssertionError("Password not provided")
+        if not re.match("\d.*[A-Z]|[A-Z].*\d", password):
+            raise AssertionError("Password must contain 1 capital letter and 1 number")
+        if len(password) < 8 or len(password) > 50:
+            raise AssertionError("Password must be between 8 and 50 characters")
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
@@ -75,3 +83,24 @@ class User(UserMixin, BaseModel):
 
     def documents(self):
         return Document.query.filter_by(owner_id=self.id, owner_type="User").all()
+
+    # Validations
+    @validates("email")
+    def validate_email(self, key, email):
+        if re.match(r"[^@]+@[^@]+\.[^@]+", email) is None:
+            raise AssertionError("Invalid email address.")
+
+    @validates("vat_number")
+    def validate_vat_number(self, key, vat_number):
+        if re.match(r"^[0-9]{9}$", vat_number) is None:
+            raise AssertionError("VAT number must be 9 digits long.")
+
+    @validates("zip_code")
+    def validate_zip_code(self, key, zip_code):
+        if re.match(r"^[0-9]{4}-[0-9]{3}$", zip_code) is None:
+            raise AssertionError("Zip code must be in the format 1234-123.")
+
+    @validates("phone")
+    def validate_phone(self, key, phone):
+        if re.match(r"^\+[0-9]{1,3}\.[0-9]{1,14}$", phone) is None:
+            raise AssertionError("Phone number must be in international format.")
