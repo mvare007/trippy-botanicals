@@ -34,3 +34,22 @@ def seed():
     admin_user.set_password("admin")
     print("Admin user created:\nEmail: admin@demo.com\nPassword: admin")
     pass
+
+
+@bp.cli.group()
+def storage():
+    """Storage commands."""
+    pass
+
+
+@storage.command()
+def clean_local():
+    """Clean local storage."""
+    import shutil
+    import os
+
+    shutil.rmtree("app/static/uploads")
+    os.makedirs("app/static/uploads")
+    open("app/static/uploads/.gitkeep", "w").close()
+    print("Local storage cleaned.")
+    pass
