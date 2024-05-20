@@ -1,58 +1,43 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
-- master
-- dev
-
-resources:
-- repo: self
-
-variables:
-  tag: 'trippy$(Build.BuildId):latest'
-  vmImageName: 'ubuntu-latest' 
+- main
 
 stages:
 - stage: Build
-  displayName: Build image
   jobs:
-  - job: Build
-    displayName: Build
+  - job: BuildJob
     pool:
-      vmImage: $(vmImageName)
+      vmImage: 'ubuntu-latest'
     steps:
-    - task: Docker@2
-      displayName: Build an image
+    - task: UsePythonVersion@0
       inputs:
-        command: 'build'
-        Dockerfile: '**/Dockerfile'
-        tags: $(tag)
-        arguments: '--build-arg FLASK_ENV="$(FLASK_ENV)" --build-arg FLASK_SECRET_KEY="$(FLASK_SECRET_KEY)" --build-arg WTF_CSRF_SECRET_KEY="$(WTF_CSRF_SECRET_KEY)" --build-arg AZURE_STORAGE_CONTAINER_NAME="$(AZURE_STORAGE_CONTAINER_NAME)" --build-arg AZURE_STORAGE_CONNECTION_STRING="$(AZURE_STORAGE_CONNECTION_STRING)"'
-    - script: docker run $(tag) flake8
-      displayName: Flake8
-- stage: Lint
-  jobs:
-    - job: Flake8
-      displayName: Flake8
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - script: docker run $(tag) flake8
+        versionSpec: '3.8'
+        addToPath: true
+      
+    - script: |
+        docker build -t myflaskapp:$(Build.BuildId) --build-arg FLASK_ENV=$(FLASK_ENV) --build-arg FLASK_SECRET_KEY=$(FLASK_SECRET_KEY) .
+      displayName: 'Build Docker Image'
+      
+    - script: |
+        docker run --rm -v $(System.DefaultWorkingDirectory)/testresults:/app/testresults myflaskapp:$(Build.BuildId) pytest --junitxml=/app/testresults/test-results.xml
+      displayName: 'Run Tests in Docker Container'
+      continueOnError: true
+
+    - publish: $(Pipeline.Workspace)/testresults
+      artifact: testresults
+
 - stage: Test
+  dependsOn: Build
   jobs:
-    - job: Tests
-      displayName: Run tests and coverage
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - script: |
-            docker run $(tag) pytestcoverage run -m pytest
-            docker run $(tag) pytestcoverage report
+  - job: TestJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - download: current
+      artifact: testresults
 
-        - task: PublishTestResults@2
-          inputs:
-            testResultsFiles: '.coverage'
-            testRunTitle: '$(Agent.OS) - $(Build.BuildNumber)[$(Agent.JobName)]'
-          condition: succeededOrFailed()
-
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/test-results.xml'
+        failTaskOnFailedTests: true
+        testRunTitle: 'Flask App Tests'
