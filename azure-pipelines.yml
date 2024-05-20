@@ -10,7 +10,7 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId):latest'
+  tag: 'trippy$(Build.BuildId):latest'
   vmImageName: 'ubuntu-latest' 
 
 stages:
@@ -27,7 +27,8 @@ stages:
       inputs:
         command: 'build'
         Dockerfile: '**/Dockerfile'
-        arguments: '-t $(tag) --build-arg FLASK_ENV="$(FLASK_ENV)" --build-arg FLASK_SECRET_KEY="$(FLASK_SECRET_KEY)" --build-arg WTF_CSRF_SECRET_KEY="$(WTF_CSRF_SECRET_KEY)" --build-arg AZURE_STORAGE_CONTAINER_NAME="$(AZURE_STORAGE_CONTAINER_NAME)" --build-arg AZURE_STORAGE_CONNECTION_STRING="$(AZURE_STORAGE_CONNECTION_STRING)"'
+        tags: $(tags)
+        arguments: '--build-arg FLASK_ENV="$(FLASK_ENV)" --build-arg FLASK_SECRET_KEY="$(FLASK_SECRET_KEY)" --build-arg WTF_CSRF_SECRET_KEY="$(WTF_CSRF_SECRET_KEY)" --build-arg AZURE_STORAGE_CONTAINER_NAME="$(AZURE_STORAGE_CONTAINER_NAME)" --build-arg AZURE_STORAGE_CONNECTION_STRING="$(AZURE_STORAGE_CONNECTION_STRING)"'
 
 - stage: Lint
   jobs:
