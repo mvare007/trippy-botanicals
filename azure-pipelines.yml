@@ -11,6 +11,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  vmImageName: 'ubuntu-latest' 
 
 stages:
 - stage: Build
