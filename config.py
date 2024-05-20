@@ -15,7 +15,7 @@ class BaseConfig:
     BOOTSTRAP_BOOTSWATCH_THEME = "lux"
     FLASK_ADMIN_SWATCH = "cyborg"
     WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY")
-    UPLOAD_FOLDER = f"{base_dir}/app/static/uploads"
+    UPLOAD_FOLDER = os.path.join(base_dir, "app", "static", "uploads")
     MAX_CONTENT_LENGTH = 10 * 1000 * 1000  # 10MB
     ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
     LOG_LEVEL = "DEBUG"
@@ -40,6 +40,7 @@ class DevelopmentConfig(BaseConfig):
     DATABASE_PASSWORD = "root"
     SQLALCHEMY_ECHO = True  # log all the statements issued to stderr.
     SQLALCHEMY_RECORD_QUERIES = True  # records executed queries for flask-debugtoolbar
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
 class TestingConfig(BaseConfig):
