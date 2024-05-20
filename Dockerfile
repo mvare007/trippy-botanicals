@@ -21,7 +21,7 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install gunicorn
 
 COPY . .
-RUN chmod a+x boot.sh
+RUN chmod a+x docker_entrypoint.sh
 
 ENV FLASK_APP trippy.py
 
