@@ -42,8 +42,8 @@ stages:
       displayName: Run tests and coverage
       steps:
         - script: |
-            coverage run -m pytest
-            coverage report
+            docker run $(tag) pytestcoverage run -m pytest
+            docker run --rm $(tag) pytestcoverage report
 
         - task: PublishTestResults@2
           inputs:
