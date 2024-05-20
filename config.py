@@ -59,6 +59,7 @@ def load_config(test=False):
     config_mapping = {
         "production": ProductionConfig,
         "development": DevelopmentConfig,
+        "test": TestingConfig,
     }
 
     try:
