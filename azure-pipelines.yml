@@ -33,9 +33,9 @@ stages:
 - stage: Lint
   jobs:
     - job: Flake8
-      displayName: Lint with Flake8
+      displayName: Flake8
       steps:
-        - script: flake8
+        - script: docker run --rm $(tag) flake8
 - stage: Test
   jobs:
     - job: Tests
