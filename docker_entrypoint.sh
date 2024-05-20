@@ -8,4 +8,6 @@ while true; do
     echo Deploy command failed, retrying in 5 secs...
     sleep 5
 done
-exec gunicorn -b :8000 --access-logfile - --error-logfile - trippy:app
+
+if [ "$FLASK_ENV" == "production" ]; then
+    exec gunicorn -b :8000 --access-logfile - --error-logfile - trippy:app

@@ -56,4 +56,4 @@ ENV AZURE_DB_PASSWORD=${AZURE_DB_PASSWORD}
 
 EXPOSE 8000
 
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["./docker_entrypoint.sh"]
