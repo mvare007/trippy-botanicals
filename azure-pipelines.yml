@@ -10,7 +10,7 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: '$(Build.BuildId):latest'
   vmImageName: 'ubuntu-latest' 
 
 stages:
@@ -35,7 +35,7 @@ stages:
     - job: Flake8
       displayName: Flake8
       steps:
-        - script: docker run --rm $(tag) flake8
+        - script: docker run $(tag) flake8
 - stage: Test
   jobs:
     - job: Tests
@@ -43,7 +43,7 @@ stages:
       steps:
         - script: |
             docker run $(tag) pytestcoverage run -m pytest
-            docker run --rm $(tag) pytestcoverage report
+            docker run $(tag) pytestcoverage report
 
         - task: PublishTestResults@2
           inputs:
