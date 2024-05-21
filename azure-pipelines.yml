@@ -2,7 +2,8 @@ trigger:
 - master
 
 variables:
-  vmImageName: ubuntu-latest
+  imageName: ubuntu-latest
+
 jobs:
 
 - job: 'Test'
