@@ -8,11 +8,7 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.8'
-        addToPath: true
-      
+ 
     - script: |
         docker build -t myflaskapp:$(Build.BuildId) --build-arg FLASK_ENV=$(FLASK_ENV) --build-arg FLASK_SECRET_KEY=$(FLASK_SECRET_KEY) .
       displayName: 'Build Docker Image'
