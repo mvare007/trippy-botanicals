@@ -18,7 +18,7 @@ stages:
       displayName: 'Build Docker Image'
       
     - script: |
-        docker run --rm myflaskapp:$(Build.BuildId) pytest 
+        docker run --rm myflaskapp:$(Build.BuildId) python -m pytest 
       displayName: 'Run Tests in Docker Container'
       continueOnError: true
 
