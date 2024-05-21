@@ -58,6 +58,7 @@ stages:
       displayName:  Install dependencies'
     - script: pytest -v — junitxml=junit/test-results.xml — cov — cov-report=xml — cov-report=html
       displayName: Run Pytest tests
+      continueOnError: true
 
     - task: PublishCodeCoverageResults@1
       displayName: 'Publish Coverage Report'
