@@ -56,7 +56,7 @@ stages:
         architecture: 'x64'
     - script: pip install -r requirements.txt
       displayName:  Install dependencies'
-    - script: pytest tests/ --cov my_project --cov-report html
+    - script: pytest tests/ --cov my_project --cov-report html --cov=$(Build.Repository.Name) 
       displayName: Run Pytest tests
    
    
