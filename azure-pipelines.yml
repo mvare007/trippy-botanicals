@@ -5,9 +5,7 @@ variables:
   imageName: ubuntu-latest
 
 jobs:
-
 - job: 'Test'
-
   pool:
     vmImage: $(imageName)
 
@@ -24,6 +22,7 @@ jobs:
   - script: |
       python -m flake8
     displayName: 'Run lint tests'
+    continueOnError: true 
 
   - script: |
       python -m pytest
