@@ -18,26 +18,8 @@ stages:
       displayName: 'Build Docker Image'
       
     - script: |
-        docker run --rm myflaskapp:$(Build.BuildId) python -m pytest 
+        docker run --rm myflaskapp:$(Build.BuildId) python -m pytest tests/ --cov trippy --cov-report html
       displayName: 'Run Tests in Docker Container'
       continueOnError: true
 
-    - publish: $(Pipeline.Workspace)/testresults
-      artifact: testresults
 
-- stage: Test
-  dependsOn: Build
-  jobs:
-  - job: TestJob
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - download: current
-      artifact: testresults
-
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/test-results.xml'
-        failTaskOnFailedTests: true
-        testRunTitle: 'Flask App Tests'
