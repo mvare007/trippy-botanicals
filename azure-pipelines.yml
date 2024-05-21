@@ -18,7 +18,7 @@ stages:
       displayName: 'Build Docker Image'
       
     - script: |
-        docker run --rm -v $(System.DefaultWorkingDirectory)/testresults:/app/testresults myflaskapp:$(Build.BuildId) pytest --junitxml=/app/testresults/test-results.xml
+        docker run --rm myflaskapp:$(Build.BuildId) pytest 
       displayName: 'Run Tests in Docker Container'
       continueOnError: true
 
