@@ -1,28 +1,41 @@
 trigger:
-- main
+- master
 
-stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: Docker@2
-      displayName: 'Build Docker Image'
-      inputs:
-        command: 'build'
-        Dockerfile: '**/Dockerfile'
-        tags: 'myflaskapp:$(Build.BuildId)'
-        buildContext: '.'
-        arguments: '--build-arg FLASK_ENV=$(FLASK_ENV) --build-arg FLASK_SECRET_KEY=$(FLASK_SECRET_KEY)'
+variables:
+  vmImageName: ubuntu-latest
+jobs:
 
-    - script: |
-        docker run --rm myflaskapp:$(Build.BuildId) python -m pytest tests/ --cov trippy --cov-report html
-      displayName: 'Run Tests in Docker Container'
-      continueOnError: true
-      
-    - script: |
-        docker run --rm myflaskapp:$(Build.BuildId) flake8
-      displayName: 'Flake8'
-      continueOnError: true
+- job: 'Test'
+
+  pool:
+    vmImage: $(imageName)
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.8'
+      addToPath: true
+      architecture: 'x64'
+
+  - script: python -m pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      python -m flake8
+    displayName: 'Run lint tests'
+
+  - script: |
+      python -m pytest
+    displayName: 'Run pytest tests'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testRunTitle: 'Python $(python.version)'
+    condition: succeededOrFailed()
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
