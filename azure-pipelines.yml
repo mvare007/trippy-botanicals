@@ -18,7 +18,7 @@ stages:
         versionSpec: $(pythonVersion)
         addToPath: true
         architecture: 'x64'
-    - script: python -m pip flake8
+    - script: python -m pip install flake8
       displayName: Install Flake8
       continueOnError: true
     - script: python -m flake8
@@ -36,7 +36,7 @@ stages:
         versionSpec: $(pythonVersion)
         addToPath: true
         architecture: 'x64'
-    - script: python -m pip bandit
+    - script: python -m pip install bandit
       displayName:  Install Bandit
       continueOnError: true
     - script: python -m bandit
