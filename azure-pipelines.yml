@@ -54,10 +54,9 @@ stages:
         versionSpec: $(pythonVersion)
         addToPath: true
         architecture: 'x64'
-    - script: python -m pip install -r requirements.txt
+    - script: pip install pytest pytest-azurepipelines pytest-cov
       displayName:  Install dependencies'
-    - script: python -m pytest tests/ --cov trippy --cov-report html
+    - script: pytest tests/ --cov my_project --cov-report html
       displayName: Run Pytest tests
-
-
-
+   
+   
