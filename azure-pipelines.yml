@@ -21,5 +21,10 @@ stages:
         docker run --rm myflaskapp:$(Build.BuildId) python -m pytest tests/ --cov trippy --cov-report html
       displayName: 'Run Tests in Docker Container'
       continueOnError: true
+      
+    - script: |
+        docker run --rm myflaskapp:$(Build.BuildId) flake8
+      displayName: 'Flake8'
+      continueOnError: true
 
 
