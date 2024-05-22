@@ -61,9 +61,10 @@ stages:
     - script: pytest --cov app --cov-report html
       displayName: Run Pytest tests
 
-- stage: Deploy
+- stage: BuildAndPush
   jobs:
   - job: BuildAndPush
+    displayName: Build and Push Docker Image
     pool:
       vmImage: $(vmImageName)
     steps:
