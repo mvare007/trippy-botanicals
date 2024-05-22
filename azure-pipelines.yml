@@ -24,6 +24,7 @@ stages:
     - script: flake8
       displayName: Run Flake8
       continueOnError: true
+
 - stage: Security
   displayName: Security
   jobs:
@@ -42,6 +43,7 @@ stages:
     - script: bandit .
       displayName: Run Bandit
       continueOnError: true
+
 - stage: Test
   displayName: Test
   jobs:
@@ -58,6 +60,7 @@ stages:
       displayName:  Install dependencies'
     - script: pytest --cov app --cov-report html
       displayName: Run Pytest tests
+
 - stage: Deploy
   jobs:
   - job: BuildAndPush
@@ -70,3 +73,12 @@ stages:
         repository: '$(containerRepository)'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'resource-manager'
+        appType: 'webAppContainer'
+        WebAppName: 'trippy-app'
+        DockerNamespace: 'docker.io'
+        DockerRepository: '$(containerRepository)'
+        DockerImageTag: '$(Build.BuildId)'
