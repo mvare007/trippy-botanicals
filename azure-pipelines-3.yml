@@ -1,0 +1,63 @@
+trigger:
+  - dev
+
+variables:
+  vmImageName: ubuntu-latest
+  pythonVersion: '3.8'
+
+stages:
+- stage: Lint
+  displayName: Lint
+  jobs:
+  - job: 'Flake8'
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(pythonVersion)
+        addToPath: true
+        architecture: 'x64'
+    - script: pip install flake8
+      displayName: Install Flake8
+      continueOnError: true
+    - script: flake8
+      displayName: Run Flake8
+      continueOnError: true
+
+- stage: Security
+  displayName: Security
+  jobs:
+  - job: 'Bandit'
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(pythonVersion)
+        addToPath: true
+        architecture: 'x64'
+    - script: pip install bandit
+      displayName:  Install Bandit
+      continueOnError: true
+    - script: bandit .
+      displayName: Run Bandit
+      continueOnError: true
+
+- stage: Test
+  displayName: Test
+  jobs:
+  - job: 'Pytest'
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(pythonVersion)
+        addToPath: true
+        architecture: 'x64'
+    - script: pip install -r requirements.txt
+      displayName:  Install dependencies'
+    - script: pytest --cov app --cov-report html
+      displayName: Run Pytest tests
+
