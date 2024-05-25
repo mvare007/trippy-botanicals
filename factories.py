@@ -1,4 +1,4 @@
-from factory import alchemy, Sequence, SubFactory, Faker
+from factory import alchemy, Sequence, SubFactory, Faker, LazyAttribute, post_generation
 from app.models.user import User
 from app.models.product_category import ProductCategory
 from app.models.product import Product
@@ -19,10 +19,17 @@ class UserFactory(alchemy.SQLAlchemyModelFactory):
     address = Faker("street_address")
     zip_code = str(randint(1000, 9999)) + "-" + str(randint(100, 999))
     location = Faker("city")
-    vat_number = randint(100000000, 999999999)
+    vat_number = str(randint(100000000, 123456789))
     phone = Faker("phone_number")
     email = Sequence(lambda n: "user{}@demo.com".format(n))
-    password_hash = Faker("password", length=12)
+
+    @post_generation
+    def set_password(obj, create, _extracted, **kwargs):
+        if not create:
+            return
+
+        password = User.generate_password()
+        obj.set_password(password)
 
 
 class ProductCategoryFactory(alchemy.SQLAlchemyModelFactory):
@@ -57,7 +64,7 @@ class OrderFactory(alchemy.SQLAlchemyModelFactory):
     user = SubFactory(UserFactory)
     status = Faker(
         "random_element",
-        elements=("created", "paid", "shipped", "delivered", "canceled"),
+        elements=("Created", "Processed", "Shipped", "Delivered", "Cancelled"),
     )
 
 
