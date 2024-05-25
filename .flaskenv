@@ -14,3 +14,6 @@ AZURE_DB_SERVER = "trippy-server"
 AZURE_DB_NAME = "trippy-db"
 AZURE_DB_USERNAME = "trippy-admin"
 AZURE_DB_PASSWORD = "donttrip420#"
+
+# Service Bus Configuration
+SERVICE_BUS_CONNECTION_STRING = "Endpoint=sb://trippy.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=6YLAK8g7W5yu+LNrsL+feidw1TYo6Muke+ASbOUhVM8="

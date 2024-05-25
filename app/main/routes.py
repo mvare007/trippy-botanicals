@@ -11,6 +11,7 @@ from app.models.product import Product
 from app.models.product_category import ProductCategory
 from app.models.document import Document
 from utils.file_validations import allowed_file
+from app.services.checkout_service import CheckoutService
 
 
 @bp.route("/")
@@ -156,10 +157,13 @@ def delete_order_item(id):
 def checkout():
     """Checkout current order"""
     form = CheckoutForm()
-    if form.validate_on_submit():
-        order = current_user.current_order()
-        order.status = "Processed"
-        db.session.commit()
+    order = current_user.current_order()
+    if form.validate_on_submit() and order.status == "Pending":
+        try:
+            CheckoutService(order).process()
+        except Exception as e:
+            flash(f"An error occurred: {str(e)}", "danger")
+            return render_template("checkout.html", title="Checkout", form=form)
         flash("Order processed successfully!", "success")
         return redirect(url_for("main.index"))
     return render_template("checkout.html", title="Checkout", form=form)

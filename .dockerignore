@@ -8,4 +8,7 @@ test-output.xml
 log/*
 !log/.gitkeep
 .flaskenv
+coverage
+.coverage
+htmlcov
 app/static/uploads/*

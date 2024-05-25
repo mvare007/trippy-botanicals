@@ -2,6 +2,7 @@ import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from app.models.base_model import BaseModel
 from typing import List
+from app.extensions import db
 
 
 class Order(BaseModel):
