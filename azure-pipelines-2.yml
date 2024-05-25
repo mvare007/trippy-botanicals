@@ -60,17 +60,3 @@ stages:
       displayName:  Install dependencies'
     - script: pytest --cov app --cov-report html
       displayName: Run Pytest tests
-
-- stage: BuildAndPush
-  jobs:
-  - job: BuildAndPush
-    displayName: Build and Push Docker Image
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      inputs:
-        containerRegistry: 'mvare007-docker-hub-service-connection'
-        repository: '$(containerRepository)'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
