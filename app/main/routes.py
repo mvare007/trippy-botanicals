@@ -156,10 +156,9 @@ def delete_order_item(id):
 def checkout():
     """Checkout current order"""
     form = CheckoutForm()
-    if form.validate_on_submit():
-        order = current_user.current_order()
-        order.status = "Processed"
-        db.session.commit()
+    order = current_user.current_order()
+    if form.validate_on_submit() and order.status == "Pending":
+        order.process()
         flash("Order processed successfully!", "success")
         return redirect(url_for("main.index"))
     return render_template("checkout.html", title="Checkout", form=form)
