@@ -1,5 +1,4 @@
-trigger:
-  - pipeline
+trigger: none # This pipeline can only be triggered manually
 
 variables:
   vmImageName: ubuntu-latest
