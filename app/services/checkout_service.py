@@ -1,6 +1,7 @@
 from utils.service_bus import ServiceBus
 from app.extensions import db
 import logging
+from config import environment
 
 
 class CheckoutService:
@@ -37,7 +38,12 @@ class CheckoutService:
 
     def __send_to_transport_company(self):
         """Send the order to the service bus queue where any transport company can pick it up."""
-        self.service_bus.send_message(self.queue_name, self.__order_dict())
+        if environment == "production":
+            self.service_bus.send_message(self.queue_name, self.__order_dict())
+        else:
+            self.logger.debug(
+                f"[DEVELOPMENT]Order {self.order.id} sent to {self.queue_name}"
+            )
 
     def __set_order_status_to_processed(self):
         self.order.status = "Processed"
