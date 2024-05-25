@@ -3,7 +3,6 @@ import sqlalchemy.orm as orm
 from app.models.base_model import BaseModel
 from typing import List
 from app.extensions import db
-from app.services.checkout_service import CheckoutService
 
 
 class Order(BaseModel):
@@ -38,9 +37,3 @@ class Order(BaseModel):
 
     def net_total(self):
         return self.total() + self.tax_total()
-
-    def process(self):
-        self.status = "Processed"
-        db.session.add(self)
-        db.session.commit()
-        CheckoutService(self).process()
