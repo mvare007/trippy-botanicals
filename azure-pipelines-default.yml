@@ -62,3 +62,15 @@ stages:
       displayName:  Install dependencies'
     - script: pytest --cov app --cov-report html
       displayName: Run Pytest tests
+- stage:
+  displayName: Publish Artifact
+  jobs:
+    - job: Publish
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
