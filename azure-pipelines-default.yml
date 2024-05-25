@@ -1,5 +1,7 @@
 trigger:
-  - dev
+  branches:
+    include:
+    - '*'
 
 variables:
   vmImageName: ubuntu-latest
@@ -60,4 +62,3 @@ stages:
       displayName:  Install dependencies'
     - script: pytest --cov app --cov-report html
       displayName: Run Pytest tests
-

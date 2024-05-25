@@ -118,14 +118,3 @@ class User(UserMixin, BaseModel):
 
     def documents(self):
         return Document.query.filter_by(owner_id=self.id, owner_type="User").all()
-
-    # Validations
-    @validates("vat_number")
-    def validate_vat_number(self, key, vat_number):
-        if re.match(r"^[0-9]{9}$", vat_number) is None:
-            raise AssertionError("VAT number must be 9 digits long.")
-
-    @validates("zip_code")
-    def validate_zip_code(self, key, zip_code):
-        if re.match(r"^[0-9]{4}-[0-9]{3}$", zip_code) is None:
-            raise AssertionError("Zip code must be in the format 1234-123.")
