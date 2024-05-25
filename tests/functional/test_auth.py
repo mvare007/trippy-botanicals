@@ -10,11 +10,12 @@ def test_login_post(client, database):
     THEN check that the response is valid and the user is redirected to the index page
     """
     user = UserFactory.create()
-    user.set_password("password")
+    password = User.generate_password()
+    user.set_password(password)
     database.session.add(user)
     database.session.commit()
 
-    data = dict(email=user.email, password="password")
+    data = dict(email=user.email, password=password)
     response = client.post("/login", data=data, follow_redirects=True)
 
     assert response.status_code == 200
@@ -66,6 +67,7 @@ def test_register_post(client, database):
     AND the user is created AND the user is redirected to the login page
     """
     email = "test@demo.com"
+    password = User.generate_password()
     response = client.post(
         "/register",
         data=dict(
@@ -78,8 +80,8 @@ def test_register_post(client, database):
                 "location": "Springfield",
                 "vat_number": "123456789",
                 "phone": "1234567890",
-                "password": "password",
-                "password2": "password",
+                "password": password,
+                "password2": password,
             }
         ),
     )
