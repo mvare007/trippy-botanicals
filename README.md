@@ -103,5 +103,6 @@ docker run -d -p 8000:8000 --name trippy-container \
 -e AZURE_DB_PASSWORD=your_db_password \
 trippy-app
 ```
+Or use a .env file (kept out of version control) with docker run --env-file .env <IMAGE_NAME>.
 
 Once the container is running, you can access the application by navigating to http://localhost:8000 in your web browser.
