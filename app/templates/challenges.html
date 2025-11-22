@@ -52,7 +52,7 @@ content %}
 
     function fetchUnsplashPhoto() {
       challengeBtn.disabled = true;
-      fetch('https://source.unsplash.com/800x600/?plants')
+      fetch('https://loremflickr.com/800/600/plants')
         .then(response => {
           document.getElementById('plant-photo').src = response.url;
           challengeBtn.disabled = false;
